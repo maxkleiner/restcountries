@@ -1,0 +1,499 @@
+Version:0.9
+StartHTML:0000000105
+EndHTML:0000094143
+StartFragment:0000001053
+EndFragment:0000094127
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>mXScriptasHTML</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<meta name="generator" content="SynEdit HTML exporter" />
+<style type="text/css">
+<!--
+body { color: #000000; background-color: #FFFFFF; }
+.pas1-assembler { }
+.pas1-character { color: #0066CC; text-decoration: underline; }
+.pas1-comment { color: #000080; font-style: italic; }
+.pas1-float { color: #00FF00; }
+.pas1-hexadecimal { color: #FF00FF; }
+.pas1-identifier { }
+.pas1-number { color: #FF0000; }
+.pas1-preprocessor { font-style: italic; }
+.pas1-reservedword { color: #000080; font-weight: bold; }
+.pas1-space { }
+.pas1-string { color: #008080; }
+.pas1-symbol { color: #FF0000; }
+-->
+</style>
+</head>
+<body>
+<!--StartFragment--><pre><code><span class="pas1-comment">//****************Shell Tester**************************
+</span><span class="pas1-reservedword">program</span><span class="pas1-space"> RESTcountries_Composer1</span><span class="pas1-symbol">;
+
+</span><span class="pas1-comment">//API Endpoints v3
+//https://restcountries.com/
+
+//http://www.softwareschule.ch/examples/alhttpclient2.txt
+//http://www.softwareschule.ch/examples/maxbox_functions.txt
+//http://www.softwareschule.ch/examples/maxbox_functions_sort.txt
+//https://github.com/apilayer/restcountries
+//http://www.softwareschule.ch/examples/json7.txt
+
+</span><span class="pas1-reservedword">Const</span><span class="pas1-space"> 
+  WeatherAPIKEY</span><span class="pas1-symbol">=</span><span class="pas1-string">'55013bf3d09cfb0619989a00ed5bed09'</span><span class="pas1-symbol">;</span><span class="pas1-space">      
+  URLWeatherAPI</span><span class="pas1-symbol">=</span><span class="pas1-string">'https://api.openweathermap.org/data/2.5/weather?q=%s&amp;units=metric&amp;appid=%s'</span><span class="pas1-symbol">;
+</span><span class="pas1-space">  RESTCountries </span><span class="pas1-symbol">=</span><span class="pas1-space"> </span><span class="pas1-string">'https://restcountries.com/v3.1/name/%s'</span><span class="pas1-symbol">;
+</span><span class="pas1-space">  RESTCountriesC </span><span class="pas1-symbol">=</span><span class="pas1-space"> </span><span class="pas1-string">'https://restcountries.com/v2/capital/%s'</span><span class="pas1-symbol">;
+</span><span class="pas1-space">     
+  
+</span><span class="pas1-reservedword">function</span><span class="pas1-space"> GetWeatherStreamJSON</span><span class="pas1-symbol">(</span><span class="pas1-reservedword">const</span><span class="pas1-space"> Data</span><span class="pas1-symbol">,</span><span class="pas1-space"> APIKEY</span><span class="pas1-symbol">:</span><span class="pas1-space"> </span><span class="pas1-reservedword">string</span><span class="pas1-symbol">):</span><span class="pas1-space"> </span><span class="pas1-reservedword">string</span><span class="pas1-symbol">;
+</span><span class="pas1-reservedword">var</span><span class="pas1-space"> encodURL</span><span class="pas1-symbol">:</span><span class="pas1-space"> </span><span class="pas1-reservedword">string</span><span class="pas1-symbol">;
+</span><span class="pas1-space">    mapStrm</span><span class="pas1-symbol">:</span><span class="pas1-space"> TStringStream</span><span class="pas1-symbol">;</span><span class="pas1-space"> jo</span><span class="pas1-symbol">:</span><span class="pas1-space"> TJSONObject</span><span class="pas1-symbol">;</span><span class="pas1-space"> 
+</span><span class="pas1-reservedword">begin
+</span><span class="pas1-space">  encodURL</span><span class="pas1-symbol">:=</span><span class="pas1-space"> Format</span><span class="pas1-symbol">(</span><span class="pas1-identifier">URLWeatherAPI</span><span class="pas1-symbol">,[</span><span class="pas1-identifier">HTTPEncode</span><span class="pas1-symbol">(</span><span class="pas1-identifier">Data</span><span class="pas1-symbol">),</span><span class="pas1-space"> APIKEY</span><span class="pas1-symbol">]);</span><span class="pas1-space">         
+  mapStrm</span><span class="pas1-symbol">:=</span><span class="pas1-space"> TStringStream</span><span class="pas1-symbol">.</span><span class="pas1-identifier">create</span><span class="pas1-symbol">(</span><span class="pas1-string">''</span><span class="pas1-symbol">);
+</span><span class="pas1-space">  </span><span class="pas1-reservedword">try
+</span><span class="pas1-space">    HttpGet</span><span class="pas1-symbol">(</span><span class="pas1-identifier">EncodURL</span><span class="pas1-symbol">,</span><span class="pas1-space"> mapStrm</span><span class="pas1-symbol">);</span><span class="pas1-space">  </span><span class="pas1-comment">//WinInet
+</span><span class="pas1-space">    mapStrm</span><span class="pas1-symbol">.</span><span class="pas1-identifier">Position</span><span class="pas1-symbol">:=</span><span class="pas1-space"> </span><span class="pas1-number">0;
+</span><span class="pas1-space">    jo</span><span class="pas1-symbol">:=</span><span class="pas1-space"> TJSONObject</span><span class="pas1-symbol">.</span><span class="pas1-identifier">Create4</span><span class="pas1-symbol">(</span><span class="pas1-identifier">mapStrm</span><span class="pas1-symbol">.</span><span class="pas1-identifier">datastring</span><span class="pas1-symbol">);
+</span><span class="pas1-space">    result</span><span class="pas1-symbol">:=</span><span class="pas1-space"> jo</span><span class="pas1-symbol">.</span><span class="pas1-identifier">getjsonarray</span><span class="pas1-symbol">(</span><span class="pas1-string">'weather'</span><span class="pas1-symbol">).</span><span class="pas1-identifier">getjsonobject</span><span class="pas1-symbol">(0).</span><span class="pas1-identifier">getstring</span><span class="pas1-symbol">(</span><span class="pas1-string">'description'</span><span class="pas1-symbol">);
+</span><span class="pas1-space">    result</span><span class="pas1-symbol">:=</span><span class="pas1-space"> result</span><span class="pas1-symbol">+</span><span class="pas1-string">' '</span><span class="pas1-symbol">+</span><span class="pas1-identifier">jo</span><span class="pas1-symbol">.</span><span class="pas1-identifier">getjsonobject</span><span class="pas1-symbol">(</span><span class="pas1-string">'main'</span><span class="pas1-symbol">).</span><span class="pas1-identifier">getstring</span><span class="pas1-symbol">(</span><span class="pas1-string">'temp'</span><span class="pas1-symbol">);
+</span><span class="pas1-space">  </span><span class="pas1-reservedword">except</span><span class="pas1-space">  
+    writeln</span><span class="pas1-symbol">(</span><span class="pas1-string">'Error: '</span><span class="pas1-symbol">+</span><span class="pas1-identifier">mapstrm</span><span class="pas1-symbol">.</span><span class="pas1-identifier">datastring</span><span class="pas1-symbol">);
+</span><span class="pas1-space">    writeln</span><span class="pas1-symbol">(</span><span class="pas1-string">'E: '</span><span class="pas1-symbol">+</span><span class="pas1-identifier">ExceptiontoString</span><span class="pas1-symbol">(</span><span class="pas1-identifier">exceptiontype</span><span class="pas1-symbol">,</span><span class="pas1-space"> exceptionparam</span><span class="pas1-symbol">));</span><span class="pas1-space">   
+  </span><span class="pas1-reservedword">finally
+</span><span class="pas1-space">    mapStrm</span><span class="pas1-symbol">.</span><span class="pas1-identifier">Free</span><span class="pas1-symbol">;</span><span class="pas1-space">                                 
+    encodURL</span><span class="pas1-symbol">:=</span><span class="pas1-space"> </span><span class="pas1-string">''</span><span class="pas1-symbol">;
+</span><span class="pas1-space">    jo</span><span class="pas1-symbol">.</span><span class="pas1-identifier">Free</span><span class="pas1-symbol">;
+</span><span class="pas1-space">  </span><span class="pas1-reservedword">end</span><span class="pas1-symbol">;
+</span><span class="pas1-reservedword">end</span><span class="pas1-symbol">;
+
+</span><span class="pas1-reservedword">const</span><span class="pas1-space"> HIDDENT</span><span class="pas1-symbol">=</span><span class="pas1-string">'&quot;flag&quot;: &quot;https://flagcdn.com/ch.svg&quot;,'</span><span class="pas1-symbol">+
+</span><span class="pas1-space">    </span><span class="pas1-string">'&quot;regionalBlocs&quot;: [                             '</span><span class="pas1-symbol">+
+</span><span class="pas1-space">    </span><span class="pas1-string">'  {                                            '</span><span class="pas1-symbol">+
+</span><span class="pas1-space">    </span><span class="pas1-string">'    &quot;acronym&quot;: &quot;EFTA&quot;,                         '</span><span class="pas1-symbol">+
+</span><span class="pas1-space">    </span><span class="pas1-string">'    &quot;name&quot;: &quot;European Free Trade Association&quot;  '</span><span class="pas1-symbol">+
+</span><span class="pas1-space">    </span><span class="pas1-string">'  }                                            '</span><span class="pas1-symbol">+
+</span><span class="pas1-space">    </span><span class="pas1-string">'],                                             '</span><span class="pas1-symbol">+
+</span><span class="pas1-space">    </span><span class="pas1-string">'&quot;cioc&quot;: &quot;SUI&quot;,                                 '</span><span class="pas1-symbol">+
+</span><span class="pas1-space">    </span><span class="pas1-string">'&quot;independent&quot;: true                            '</span><span class="pas1-symbol">+
+</span><span class="pas1-space"> </span><span class="pas1-string">'}                                                 '</span><span class="pas1-symbol">;
+
+</span><span class="pas1-reservedword">const</span><span class="pas1-space"> HIDDENT2</span><span class="pas1-symbol">=</span><span class="pas1-space">  </span><span class="pas1-string">',&quot;flag&quot;:&quot;https://flagcdn.com/ch.svg&quot;,&quot;regionalBlocs&quot;:[{&quot;acronym&quot;:&quot;EFTA&quot;,&quot;name&quot;:&quot;European Free Trade Association&quot;}],&quot;cioc&quot;:&quot;SUI&quot;,&quot;independent&quot;:true'</span><span class="pas1-symbol">;
+
+</span><span class="pas1-comment">//private final static String JSON_TEST_DATA
+</span><span class="pas1-reservedword">const</span><span class="pas1-space"> HIDDENT3</span><span class="pas1-symbol">=
+</span><span class="pas1-space">         </span><span class="pas1-string">'{'
+</span><span class="pas1-space">        </span><span class="pas1-symbol">+</span><span class="pas1-space"> </span><span class="pas1-string">'   \&quot;tms_guid\&quot;: \&quot;9LaHmoHpmTd811R\&quot;, '
+</span><span class="pas1-space">        </span><span class="pas1-symbol">+</span><span class="pas1-space"> </span><span class="pas1-string">'   \&quot;recharge_status\&quot;: \&quot;100\&quot;, '
+</span><span class="pas1-space">        </span><span class="pas1-symbol">+</span><span class="pas1-space"> </span><span class="pas1-string">'   \&quot;message\&quot;: \&quot;Transaction Successful\&quot;, '
+</span><span class="pas1-space">        </span><span class="pas1-symbol">+</span><span class="pas1-space"> </span><span class="pas1-string">'   \&quot;response_time\&quot;: { '
+</span><span class="pas1-space">        </span><span class="pas1-symbol">+</span><span class="pas1-space"> </span><span class="pas1-string">'      \&quot;verifyClient\&quot;: 0.0281, '
+</span><span class="pas1-space">        </span><span class="pas1-symbol">+</span><span class="pas1-space"> </span><span class="pas1-string">'      \&quot;verifyGuid\&quot;: 0.8695, '
+</span><span class="pas1-space">        </span><span class="pas1-symbol">+</span><span class="pas1-space"> </span><span class="pas1-string">'      \&quot;verifyOperator\&quot;: 0.8698,'
+</span><span class="pas1-space">        </span><span class="pas1-symbol">+</span><span class="pas1-space"> </span><span class="pas1-string">'      \&quot;verifyMsid\&quot;: 0.8698,'
+</span><span class="pas1-space">        </span><span class="pas1-symbol">+</span><span class="pas1-space"> </span><span class="pas1-string">'      \&quot;tms_guid\&quot;: 1.6971,'
+</span><span class="pas1-space">        </span><span class="pas1-symbol">+</span><span class="pas1-space"> </span><span class="pas1-string">'      \&quot;queryErr\&quot;: 7.4243,'
+</span><span class="pas1-space">        </span><span class="pas1-symbol">+</span><span class="pas1-space"> </span><span class="pas1-string">'      \&quot;StoringRecharge\&quot;: 7.4358,'
+</span><span class="pas1-space">        </span><span class="pas1-symbol">+</span><span class="pas1-space"> </span><span class="pas1-string">'      \&quot;UpdatingBalance\&quot;: 7.448'
+</span><span class="pas1-space">        </span><span class="pas1-symbol">+</span><span class="pas1-space"> </span><span class="pas1-string">'   }'
+</span><span class="pas1-space">        </span><span class="pas1-symbol">+</span><span class="pas1-space"> </span><span class="pas1-string">'}'</span><span class="pas1-symbol">;
+</span><span class="pas1-space">        
+</span><span class="pas1-reservedword">const</span><span class="pas1-space"> HIDDENT4INVALID</span><span class="pas1-symbol">=</span><span class="pas1-space">        
+   </span><span class="pas1-string">'{'</span><span class="pas1-symbol">+
+</span><span class="pas1-space">   </span><span class="pas1-string">' &quot;tms_guid&quot;: &quot;9LaHmoHpmTd811R&quot;,         '</span><span class="pas1-symbol">+
+</span><span class="pas1-space">   </span><span class="pas1-string">' &quot;recharge_status&quot;: &quot;100&quot;,              '</span><span class="pas1-symbol">+
+</span><span class="pas1-space">   </span><span class="pas1-string">' &quot;message&quot;: &quot;Transaction Successful&quot;,   '</span><span class="pas1-symbol">+
+</span><span class="pas1-space">   </span><span class="pas1-string">' &quot;response_time&quot;: {                     '</span><span class="pas1-symbol">+
+</span><span class="pas1-space">   </span><span class="pas1-string">'   &quot;verifyClient&quot;: 0.0281,              '</span><span class="pas1-symbol">+
+</span><span class="pas1-space">   </span><span class="pas1-string">'   &quot;verifyGuid&quot;: 0.8695,                '</span><span class="pas1-symbol">+
+</span><span class="pas1-space">   </span><span class="pas1-string">'   &quot;verifyOperator&quot;: 0.8698,            '</span><span class="pas1-symbol">+
+</span><span class="pas1-space">   </span><span class="pas1-string">'   &quot;verifyMsid&quot;: 0.8698,                '</span><span class="pas1-symbol">+
+</span><span class="pas1-space">   </span><span class="pas1-string">'   &quot;tms_guid&quot;: 1.6971,                  '</span><span class="pas1-symbol">+
+</span><span class="pas1-space">   </span><span class="pas1-string">'   &quot;queryErr&quot;: 7.4243,                  '</span><span class="pas1-symbol">+
+</span><span class="pas1-space">   </span><span class="pas1-string">'   &quot;StoringRecharge&quot;: 7.4358,           '</span><span class="pas1-symbol">+
+</span><span class="pas1-space">   </span><span class="pas1-string">'   &quot;UpdatingBalance&quot;: 7.448             '</span><span class="pas1-symbol">+
+</span><span class="pas1-space">   </span><span class="pas1-string">'  }                                     '</span><span class="pas1-symbol">+
+</span><span class="pas1-space">   </span><span class="pas1-string">'}                                       '</span><span class="pas1-symbol">;
+</span><span class="pas1-space">   
+</span><span class="pas1-reservedword">const</span><span class="pas1-space"> HIDDENT4VALID</span><span class="pas1-symbol">=
+</span><span class="pas1-space">   </span><span class="pas1-string">'{'</span><span class="pas1-symbol">+
+</span><span class="pas1-space">	</span><span class="pas1-string">'&quot;tms_guid&quot;: &quot;9LaHmoHpmTd811R&quot;,          '</span><span class="pas1-symbol">+
+</span><span class="pas1-space">	</span><span class="pas1-string">'&quot;recharge_status&quot;: &quot;100&quot;,               '</span><span class="pas1-symbol">+
+</span><span class="pas1-space">	</span><span class="pas1-string">'&quot;message&quot;: &quot;Transaction Successful&quot;,    '</span><span class="pas1-symbol">+
+</span><span class="pas1-space">	</span><span class="pas1-string">'&quot;response_time&quot;: {                      '</span><span class="pas1-symbol">+
+</span><span class="pas1-space">	</span><span class="pas1-string">'	&quot;verifyClient&quot;: 0.0281,               '</span><span class="pas1-symbol">+
+</span><span class="pas1-space">	</span><span class="pas1-string">'	&quot;verifyGuid&quot;: 0.8695,                 '</span><span class="pas1-symbol">+
+</span><span class="pas1-space">	</span><span class="pas1-string">'	&quot;verifyOperator&quot;: 0.86                '</span><span class="pas1-symbol">+
+</span><span class="pas1-space">	</span><span class="pas1-string">'	&quot;verifyMsid&quot;: 0.8698,                 '</span><span class="pas1-symbol">+
+</span><span class="pas1-space">	</span><span class="pas1-string">'	&quot;tms_guid&quot;: 1.6971,                   '</span><span class="pas1-symbol">+
+</span><span class="pas1-space">	</span><span class="pas1-string">'	&quot;queryErr&quot;: 7.4243,                   '</span><span class="pas1-symbol">+
+</span><span class="pas1-space">	</span><span class="pas1-string">'	&quot;StoringRecharge&quot;: 7.4358,            '</span><span class="pas1-symbol">+
+</span><span class="pas1-space">	</span><span class="pas1-string">'	&quot;UpdatingBalance&quot;: 7.448              '</span><span class="pas1-symbol">+
+</span><span class="pas1-space">	</span><span class="pas1-string">' }                                      '</span><span class="pas1-symbol">+
+</span><span class="pas1-space">   </span><span class="pas1-string">'}'</span><span class="pas1-symbol">;
+
+</span><span class="pas1-comment">//https://stackoverflow.com/questions/22394748/json-conversion-error-expected-after-key
+//{{&quot;x&quot; : 100, &quot;y&quot; : 90},{&quot;x&quot; : 100, &quot;y&quot; : 85}}
+//Use [] not {} as the outer brackets, or :[{ --&gt; :{{
+
+</span><span class="pas1-reservedword">function</span><span class="pas1-space"> GetRestCountriesJSON</span><span class="pas1-symbol">(</span><span class="pas1-reservedword">const</span><span class="pas1-space"> URLCountry</span><span class="pas1-symbol">,</span><span class="pas1-space"> Data</span><span class="pas1-symbol">,</span><span class="pas1-space"> APIKEY</span><span class="pas1-symbol">:</span><span class="pas1-space"> </span><span class="pas1-reservedword">string</span><span class="pas1-symbol">):</span><span class="pas1-space"> </span><span class="pas1-reservedword">string</span><span class="pas1-symbol">;
+</span><span class="pas1-reservedword">var</span><span class="pas1-space"> encodURL</span><span class="pas1-symbol">,</span><span class="pas1-space"> s2</span><span class="pas1-symbol">,</span><span class="pas1-space"> tmpstr</span><span class="pas1-symbol">:</span><span class="pas1-space"> </span><span class="pas1-reservedword">string</span><span class="pas1-symbol">;
+</span><span class="pas1-space">    mapStrm</span><span class="pas1-symbol">:</span><span class="pas1-space"> TStringStream</span><span class="pas1-symbol">;</span><span class="pas1-space"> jo</span><span class="pas1-symbol">,</span><span class="pas1-space"> jo2</span><span class="pas1-symbol">:</span><span class="pas1-space"> TJSONObject</span><span class="pas1-symbol">;</span><span class="pas1-space"> ajar</span><span class="pas1-symbol">:</span><span class="pas1-space"> TJSONArray</span><span class="pas1-symbol">;</span><span class="pas1-space"> 
+    i1</span><span class="pas1-symbol">,</span><span class="pas1-space"> i2</span><span class="pas1-symbol">:</span><span class="pas1-space"> integer</span><span class="pas1-symbol">;
+</span><span class="pas1-reservedword">begin
+</span><span class="pas1-space">  </span><span class="pas1-comment">//data:= 'germany';
+</span><span class="pas1-space">  encodURL</span><span class="pas1-symbol">:=</span><span class="pas1-space"> Format</span><span class="pas1-symbol">(</span><span class="pas1-identifier">URLCountry</span><span class="pas1-symbol">,[</span><span class="pas1-identifier">HTTPEncode</span><span class="pas1-symbol">(</span><span class="pas1-identifier">Data</span><span class="pas1-symbol">),</span><span class="pas1-space"> APIKEY</span><span class="pas1-symbol">]);</span><span class="pas1-space"> 
+  </span><span class="pas1-comment">//encodURL:= Format(URLCountry,[HTTPEncode(Data)]);        
+</span><span class="pas1-space">  mapStrm</span><span class="pas1-symbol">:=</span><span class="pas1-space"> TStringStream</span><span class="pas1-symbol">.</span><span class="pas1-identifier">create</span><span class="pas1-symbol">(</span><span class="pas1-string">''</span><span class="pas1-symbol">);
+</span><span class="pas1-space">  </span><span class="pas1-reservedword">try
+</span><span class="pas1-space">    HttpGet</span><span class="pas1-symbol">(</span><span class="pas1-identifier">EncodURL</span><span class="pas1-symbol">,</span><span class="pas1-space"> mapStrm</span><span class="pas1-symbol">);</span><span class="pas1-space">  </span><span class="pas1-comment">//WinInet
+</span><span class="pas1-space">    mapStrm</span><span class="pas1-symbol">.</span><span class="pas1-identifier">Position</span><span class="pas1-symbol">:=</span><span class="pas1-space"> </span><span class="pas1-number">0;
+</span><span class="pas1-space">   </span><span class="pas1-comment">{ i1 := pos(',&quot;postalCode&quot;', mapStrm.datastring); 
+     i2:= pos('$&quot;', mapStrm.datastring); 
+     writeln('pos '+itoa(i2));        
+     tmpstr:= mapStrm.datastring;            
+     delete(tmpstr, i1, i2-i1+3);    
+     writeln(tmpstr)
+     writeln('  ');   }</span><span class="pas1-space">  
+     </span><span class="pas1-comment">{tmpstr:= S_AllTrim(mapStrm.datastring)
+     tmpstr:= StringReplace(mapStrm.datastring, ',&quot;independent&quot;:true',
+                           '',[rfReplaceAll, rfIgnoreCase]);  }
+</span><span class="pas1-space">     </span><span class="pas1-comment">//tmpstr:= StringReplace(mapStrm.datastring, HIDDENT2,
+</span><span class="pas1-space">       </span><span class="pas1-comment">//                     '',[rfReplaceAll, rfIgnoreCase]);                         
+</span><span class="pas1-space">    </span><span class="pas1-comment">//tmpstr:= S_AllTrim(tmpstr)   
+</span><span class="pas1-space">    </span><span class="pas1-comment">//writeln(tmpstr)
+</span><span class="pas1-space">     writeln</span><span class="pas1-symbol">(</span><span class="pas1-string">'  '</span><span class="pas1-symbol">);</span><span class="pas1-space">                                       
+    </span><span class="pas1-comment">//jo:= TJSONObject.Create4('{'+tmpstr+'}');  
+</span><span class="pas1-space">   </span><span class="pas1-comment">// jo:= TJSONObject.Create4(HIDDENT4VALID);  
+</span><span class="pas1-space">    </span><span class="pas1-comment">//try 
+</span><span class="pas1-space">    </span><span class="pas1-comment">//imoortant hack: we have to replace json node from [{ to { ! 
+</span><span class="pas1-space">    tmpstr</span><span class="pas1-symbol">:=</span><span class="pas1-space"> StringReplace</span><span class="pas1-symbol">(</span><span class="pas1-identifier">mapStrm</span><span class="pas1-symbol">.</span><span class="pas1-identifier">datastring</span><span class="pas1-symbol">,</span><span class="pas1-space"> </span><span class="pas1-string">'[{&quot;name'</span><span class="pas1-symbol">,
+</span><span class="pas1-space">                           </span><span class="pas1-string">'{&quot;name'</span><span class="pas1-symbol">,[</span><span class="pas1-identifier">rfReplaceAll</span><span class="pas1-symbol">,</span><span class="pas1-space"> rfIgnoreCase</span><span class="pas1-symbol">]);
+</span><span class="pas1-space">    writeln</span><span class="pas1-symbol">(</span><span class="pas1-identifier">tmpstr</span><span class="pas1-symbol">)
+</span><span class="pas1-space">     writeln</span><span class="pas1-symbol">(</span><span class="pas1-string">'  '</span><span class="pas1-symbol">);</span><span class="pas1-space">                           
+     jo</span><span class="pas1-symbol">:=</span><span class="pas1-space"> TJSONObject</span><span class="pas1-symbol">.</span><span class="pas1-identifier">Create4</span><span class="pas1-symbol">(</span><span class="pas1-string">''</span><span class="pas1-symbol">+</span><span class="pas1-identifier">tmpstr</span><span class="pas1-symbol">+</span><span class="pas1-string">'}'</span><span class="pas1-symbol">);</span><span class="pas1-space">  
+    </span><span class="pas1-comment">//except
+</span><span class="pas1-space">    </span><span class="pas1-comment">//end;                   
+</span><span class="pas1-space">    </span><span class="pas1-comment">//result:=jo.getjsonarray('borders').getjsonobject(0).getstring('description');
+</span><span class="pas1-space">    </span><span class="pas1-comment">//Function remove( key : string) : TZAbstractObject');
+</span><span class="pas1-space">     jo</span><span class="pas1-symbol">.</span><span class="pas1-identifier">remove</span><span class="pas1-symbol">(</span><span class="pas1-string">'flag'</span><span class="pas1-symbol">);
+</span><span class="pas1-space">     writeln</span><span class="pas1-symbol">(</span><span class="pas1-string">'capital: '</span><span class="pas1-symbol">+(</span><span class="pas1-identifier">jo</span><span class="pas1-symbol">.</span><span class="pas1-identifier">getstring</span><span class="pas1-symbol">(</span><span class="pas1-string">'capital'</span><span class="pas1-symbol">)));
+</span><span class="pas1-space">     writeln</span><span class="pas1-symbol">(</span><span class="pas1-string">'len '</span><span class="pas1-symbol">+</span><span class="pas1-identifier">itoa</span><span class="pas1-symbol">(</span><span class="pas1-identifier">jo</span><span class="pas1-symbol">.</span><span class="pas1-identifier">getjsonobject</span><span class="pas1-symbol">(</span><span class="pas1-string">'translations'</span><span class="pas1-symbol">).</span><span class="pas1-identifier">length</span><span class="pas1-symbol">))
+</span><span class="pas1-space">     jo2</span><span class="pas1-symbol">:=</span><span class="pas1-space"> jo</span><span class="pas1-symbol">.</span><span class="pas1-identifier">getjsonobject</span><span class="pas1-symbol">(</span><span class="pas1-string">'translations'</span><span class="pas1-symbol">);
+</span><span class="pas1-space">     </span><span class="pas1-comment">//ajar:= jo.getjsonobject(it).getstring('translations')
+</span><span class="pas1-space">     ajar</span><span class="pas1-symbol">:=</span><span class="pas1-space"> jo</span><span class="pas1-symbol">.</span><span class="pas1-identifier">names</span><span class="pas1-symbol">;
+</span><span class="pas1-space">     writeln</span><span class="pas1-symbol">(</span><span class="pas1-string">'len names languages: '</span><span class="pas1-symbol">+</span><span class="pas1-identifier">itoa</span><span class="pas1-symbol">(</span><span class="pas1-identifier">ajar</span><span class="pas1-symbol">.</span><span class="pas1-identifier">length</span><span class="pas1-symbol">))
+</span><span class="pas1-space">     </span><span class="pas1-reservedword">for</span><span class="pas1-space"> </span><span class="pas1-reservedword">it</span><span class="pas1-symbol">:=</span><span class="pas1-space"> </span><span class="pas1-number">0</span><span class="pas1-space"> </span><span class="pas1-reservedword">to</span><span class="pas1-space"> jo2</span><span class="pas1-symbol">.</span><span class="pas1-identifier">length</span><span class="pas1-symbol">-1</span><span class="pas1-space"> </span><span class="pas1-reservedword">do</span><span class="pas1-space"> 
+             writeln</span><span class="pas1-symbol">(</span><span class="pas1-identifier">jo2</span><span class="pas1-symbol">.</span><span class="pas1-identifier">getstring</span><span class="pas1-symbol">(</span><span class="pas1-identifier">jo2</span><span class="pas1-symbol">.</span><span class="pas1-identifier">keys</span><span class="pas1-symbol">[</span><span class="pas1-reservedword">it</span><span class="pas1-symbol">]));
+</span><span class="pas1-space">     ajar</span><span class="pas1-symbol">:=</span><span class="pas1-space"> jo</span><span class="pas1-symbol">.</span><span class="pas1-identifier">getjsonarray</span><span class="pas1-symbol">(</span><span class="pas1-string">'borders'</span><span class="pas1-symbol">);</span><span class="pas1-space"> 
+     writeln</span><span class="pas1-symbol">(</span><span class="pas1-string">'len names borders: '</span><span class="pas1-symbol">+</span><span class="pas1-identifier">itoa</span><span class="pas1-symbol">(</span><span class="pas1-identifier">ajar</span><span class="pas1-symbol">.</span><span class="pas1-identifier">length</span><span class="pas1-symbol">))</span><span class="pas1-space">   
+     </span><span class="pas1-reservedword">for</span><span class="pas1-space"> </span><span class="pas1-reservedword">it</span><span class="pas1-symbol">:=</span><span class="pas1-space"> </span><span class="pas1-number">0</span><span class="pas1-space"> </span><span class="pas1-reservedword">to</span><span class="pas1-space"> ajar</span><span class="pas1-symbol">.</span><span class="pas1-identifier">length</span><span class="pas1-symbol">-1</span><span class="pas1-space"> </span><span class="pas1-reservedword">do</span><span class="pas1-space"> 
+             writeln</span><span class="pas1-symbol">(</span><span class="pas1-identifier">ajar</span><span class="pas1-symbol">.</span><span class="pas1-identifier">getstring</span><span class="pas1-symbol">(</span><span class="pas1-reservedword">it</span><span class="pas1-symbol">));</span><span class="pas1-space">    
+    </span><span class="pas1-comment">//result:= jo.getjsonarray('borders').getjsonobject(0).getstring;        
+</span><span class="pas1-space">    </span><span class="pas1-comment">//result:= result+' '+jo.getjsonobject('main').getstring('temp');
+</span><span class="pas1-space">  </span><span class="pas1-reservedword">except</span><span class="pas1-space">  
+    </span><span class="pas1-comment">//writeln('Error: '+mapstrm.datastring);
+</span><span class="pas1-space">    writeln</span><span class="pas1-symbol">(</span><span class="pas1-string">'E: '</span><span class="pas1-symbol">+</span><span class="pas1-identifier">ExceptiontoString</span><span class="pas1-symbol">(</span><span class="pas1-identifier">exceptiontype</span><span class="pas1-symbol">,</span><span class="pas1-space"> exceptionparam</span><span class="pas1-symbol">));</span><span class="pas1-space">   
+  </span><span class="pas1-reservedword">finally
+</span><span class="pas1-space">    mapStrm</span><span class="pas1-symbol">.</span><span class="pas1-identifier">Free</span><span class="pas1-symbol">;</span><span class="pas1-space">                                 
+    encodURL</span><span class="pas1-symbol">:=</span><span class="pas1-space"> </span><span class="pas1-string">''</span><span class="pas1-symbol">;
+</span><span class="pas1-space">    jo</span><span class="pas1-symbol">.</span><span class="pas1-identifier">Free</span><span class="pas1-symbol">;
+</span><span class="pas1-space">  </span><span class="pas1-reservedword">end</span><span class="pas1-symbol">;
+</span><span class="pas1-reservedword">end</span><span class="pas1-symbol">;
+
+</span><span class="pas1-reservedword">function</span><span class="pas1-space"> GetRestCountriesJSON2</span><span class="pas1-symbol">(</span><span class="pas1-reservedword">const</span><span class="pas1-space"> URLCountry</span><span class="pas1-symbol">,</span><span class="pas1-space"> Datafeed</span><span class="pas1-symbol">,</span><span class="pas1-space"> APIKEY</span><span class="pas1-symbol">:</span><span class="pas1-space"> </span><span class="pas1-reservedword">string</span><span class="pas1-symbol">):</span><span class="pas1-space"> </span><span class="pas1-reservedword">string</span><span class="pas1-symbol">;
+</span><span class="pas1-reservedword">var</span><span class="pas1-space"> encodURL</span><span class="pas1-symbol">,</span><span class="pas1-space"> tmpstr</span><span class="pas1-symbol">:</span><span class="pas1-space"> </span><span class="pas1-reservedword">string</span><span class="pas1-symbol">;
+</span><span class="pas1-space">    mapStrm</span><span class="pas1-symbol">:</span><span class="pas1-space"> TStringStream</span><span class="pas1-symbol">;</span><span class="pas1-space"> jo</span><span class="pas1-symbol">,</span><span class="pas1-identifier">jo2</span><span class="pas1-symbol">:</span><span class="pas1-space"> TJSONObject</span><span class="pas1-symbol">;</span><span class="pas1-space"> ajar</span><span class="pas1-symbol">:</span><span class="pas1-space"> TJSONArray</span><span class="pas1-symbol">;</span><span class="pas1-space"> 
+</span><span class="pas1-reservedword">begin
+</span><span class="pas1-space">  </span><span class="pas1-comment">//datafeed:= 'vienna';
+</span><span class="pas1-space">  encodURL</span><span class="pas1-symbol">:=</span><span class="pas1-space"> Format</span><span class="pas1-symbol">(</span><span class="pas1-identifier">URLCountry</span><span class="pas1-symbol">,[</span><span class="pas1-identifier">HTTPEncode</span><span class="pas1-symbol">(</span><span class="pas1-identifier">Datafeed</span><span class="pas1-symbol">),</span><span class="pas1-space"> APIKEY</span><span class="pas1-symbol">]);</span><span class="pas1-space"> 
+  mapStrm</span><span class="pas1-symbol">:=</span><span class="pas1-space"> TStringStream</span><span class="pas1-symbol">.</span><span class="pas1-identifier">create</span><span class="pas1-symbol">(</span><span class="pas1-string">''</span><span class="pas1-symbol">);
+</span><span class="pas1-space">  </span><span class="pas1-reservedword">try
+</span><span class="pas1-space">    HttpGet</span><span class="pas1-symbol">(</span><span class="pas1-identifier">EncodURL</span><span class="pas1-symbol">,</span><span class="pas1-space"> mapStrm</span><span class="pas1-symbol">);</span><span class="pas1-space">  </span><span class="pas1-comment">//WinInet
+</span><span class="pas1-space">    mapStrm</span><span class="pas1-symbol">.</span><span class="pas1-identifier">Position</span><span class="pas1-symbol">:=</span><span class="pas1-space"> </span><span class="pas1-number">0;
+</span><span class="pas1-space">     writeln</span><span class="pas1-symbol">(</span><span class="pas1-string">'  '</span><span class="pas1-symbol">);</span><span class="pas1-space">                                       
+    </span><span class="pas1-comment">// jo:= TJSONObject.Create4(HIDDENT4VALID);  
+</span><span class="pas1-space">    </span><span class="pas1-comment">//imoortant hack: we have to replace json node from [{ to { ! 
+</span><span class="pas1-space">    tmpstr</span><span class="pas1-symbol">:=</span><span class="pas1-space"> StringReplace</span><span class="pas1-symbol">(</span><span class="pas1-identifier">mapStrm</span><span class="pas1-symbol">.</span><span class="pas1-identifier">datastring</span><span class="pas1-symbol">,</span><span class="pas1-space"> </span><span class="pas1-string">'[{&quot;name'</span><span class="pas1-symbol">,
+</span><span class="pas1-space">                           </span><span class="pas1-string">'{&quot;name'</span><span class="pas1-symbol">,[</span><span class="pas1-identifier">rfReplaceAll</span><span class="pas1-symbol">,</span><span class="pas1-space"> rfIgnoreCase</span><span class="pas1-symbol">]);
+</span><span class="pas1-space">    writeln</span><span class="pas1-symbol">(</span><span class="pas1-identifier">tmpstr</span><span class="pas1-symbol">)
+</span><span class="pas1-space">     writeln</span><span class="pas1-symbol">(</span><span class="pas1-string">'  '</span><span class="pas1-symbol">);</span><span class="pas1-space">                           
+     jo</span><span class="pas1-symbol">:=</span><span class="pas1-space"> TJSONObject</span><span class="pas1-symbol">.</span><span class="pas1-identifier">Create4</span><span class="pas1-symbol">(</span><span class="pas1-string">''</span><span class="pas1-symbol">+</span><span class="pas1-identifier">tmpstr</span><span class="pas1-symbol">+</span><span class="pas1-string">'}'</span><span class="pas1-symbol">);</span><span class="pas1-space">  
+    </span><span class="pas1-comment">//Function remove( key : string) : TZAbstractObject');
+</span><span class="pas1-space">     jo</span><span class="pas1-symbol">.</span><span class="pas1-identifier">remove</span><span class="pas1-symbol">(</span><span class="pas1-string">'flag'</span><span class="pas1-symbol">);
+</span><span class="pas1-space">     writeln</span><span class="pas1-symbol">(</span><span class="pas1-string">'capital: '</span><span class="pas1-symbol">+(</span><span class="pas1-identifier">jo</span><span class="pas1-symbol">.</span><span class="pas1-identifier">getstring</span><span class="pas1-symbol">(</span><span class="pas1-string">'capital'</span><span class="pas1-symbol">)));
+</span><span class="pas1-space">     writeln</span><span class="pas1-symbol">(</span><span class="pas1-string">'len translations: '</span><span class="pas1-symbol">+</span><span class="pas1-identifier">itoa</span><span class="pas1-symbol">(</span><span class="pas1-identifier">jo</span><span class="pas1-symbol">.</span><span class="pas1-identifier">getjsonobject</span><span class="pas1-symbol">(</span><span class="pas1-string">'translations'</span><span class="pas1-symbol">).</span><span class="pas1-identifier">length</span><span class="pas1-symbol">))
+</span><span class="pas1-space">     jo2</span><span class="pas1-symbol">:=</span><span class="pas1-space"> jo</span><span class="pas1-symbol">.</span><span class="pas1-identifier">getjsonobject</span><span class="pas1-symbol">(</span><span class="pas1-string">'translations'</span><span class="pas1-symbol">);
+</span><span class="pas1-space">     ajar</span><span class="pas1-symbol">:=</span><span class="pas1-space"> jo</span><span class="pas1-symbol">.</span><span class="pas1-identifier">names</span><span class="pas1-symbol">;
+</span><span class="pas1-space">     writeln</span><span class="pas1-symbol">(</span><span class="pas1-string">'len node names: '</span><span class="pas1-symbol">+</span><span class="pas1-identifier">itoa</span><span class="pas1-symbol">(</span><span class="pas1-identifier">ajar</span><span class="pas1-symbol">.</span><span class="pas1-identifier">length</span><span class="pas1-symbol">))
+</span><span class="pas1-space">     </span><span class="pas1-reservedword">for</span><span class="pas1-space"> </span><span class="pas1-reservedword">it</span><span class="pas1-symbol">:=</span><span class="pas1-space"> </span><span class="pas1-number">0</span><span class="pas1-space"> </span><span class="pas1-reservedword">to</span><span class="pas1-space"> jo2</span><span class="pas1-symbol">.</span><span class="pas1-identifier">length</span><span class="pas1-symbol">-1</span><span class="pas1-space"> </span><span class="pas1-reservedword">do</span><span class="pas1-space"> 
+             writeln</span><span class="pas1-symbol">(</span><span class="pas1-identifier">jo2</span><span class="pas1-symbol">.</span><span class="pas1-identifier">getstring</span><span class="pas1-symbol">(</span><span class="pas1-identifier">jo2</span><span class="pas1-symbol">.</span><span class="pas1-identifier">keys</span><span class="pas1-symbol">[</span><span class="pas1-reservedword">it</span><span class="pas1-symbol">]));
+</span><span class="pas1-space">     ajar</span><span class="pas1-symbol">:=</span><span class="pas1-space"> jo</span><span class="pas1-symbol">.</span><span class="pas1-identifier">getjsonarray</span><span class="pas1-symbol">(</span><span class="pas1-string">'borders'</span><span class="pas1-symbol">);</span><span class="pas1-space"> 
+     writeln</span><span class="pas1-symbol">(</span><span class="pas1-string">'len names borders: '</span><span class="pas1-symbol">+</span><span class="pas1-identifier">itoa</span><span class="pas1-symbol">(</span><span class="pas1-identifier">ajar</span><span class="pas1-symbol">.</span><span class="pas1-identifier">length</span><span class="pas1-symbol">))</span><span class="pas1-space">   
+     </span><span class="pas1-reservedword">for</span><span class="pas1-space"> </span><span class="pas1-reservedword">it</span><span class="pas1-symbol">:=</span><span class="pas1-space"> </span><span class="pas1-number">0</span><span class="pas1-space"> </span><span class="pas1-reservedword">to</span><span class="pas1-space"> ajar</span><span class="pas1-symbol">.</span><span class="pas1-identifier">length</span><span class="pas1-symbol">-1</span><span class="pas1-space"> </span><span class="pas1-reservedword">do</span><span class="pas1-space"> 
+             writeln</span><span class="pas1-symbol">(</span><span class="pas1-identifier">ajar</span><span class="pas1-symbol">.</span><span class="pas1-identifier">getstring</span><span class="pas1-symbol">(</span><span class="pas1-reservedword">it</span><span class="pas1-symbol">));</span><span class="pas1-space">    
+     ajar</span><span class="pas1-symbol">:=</span><span class="pas1-space"> jo</span><span class="pas1-symbol">.</span><span class="pas1-identifier">getjsonarray</span><span class="pas1-symbol">(</span><span class="pas1-string">'languages'</span><span class="pas1-symbol">);</span><span class="pas1-space">  
+     writeln</span><span class="pas1-symbol">(</span><span class="pas1-string">'len names languages: '</span><span class="pas1-symbol">+</span><span class="pas1-identifier">itoa</span><span class="pas1-symbol">(</span><span class="pas1-identifier">ajar</span><span class="pas1-symbol">.</span><span class="pas1-identifier">length</span><span class="pas1-symbol">))</span><span class="pas1-space">  
+     </span><span class="pas1-reservedword">for</span><span class="pas1-space"> </span><span class="pas1-reservedword">it</span><span class="pas1-symbol">:=</span><span class="pas1-space"> </span><span class="pas1-number">0</span><span class="pas1-space"> </span><span class="pas1-reservedword">to</span><span class="pas1-space"> ajar</span><span class="pas1-symbol">.</span><span class="pas1-identifier">length</span><span class="pas1-symbol">-1</span><span class="pas1-space"> </span><span class="pas1-reservedword">do</span><span class="pas1-space"> </span><span class="pas1-reservedword">begin
+</span><span class="pas1-space">        writeln</span><span class="pas1-symbol">(</span><span class="pas1-identifier">ajar</span><span class="pas1-symbol">.</span><span class="pas1-identifier">getstring</span><span class="pas1-symbol">(</span><span class="pas1-reservedword">it</span><span class="pas1-symbol">));</span><span class="pas1-space">  
+        writeln</span><span class="pas1-symbol">(</span><span class="pas1-identifier">ajar</span><span class="pas1-symbol">.</span><span class="pas1-identifier">getjsonobject</span><span class="pas1-symbol">(</span><span class="pas1-reservedword">it</span><span class="pas1-symbol">).</span><span class="pas1-identifier">getstring</span><span class="pas1-symbol">(</span><span class="pas1-string">'name'</span><span class="pas1-symbol">));</span><span class="pas1-space"> 
+     </span><span class="pas1-reservedword">end</span><span class="pas1-symbol">;</span><span class="pas1-space"> 
+     writeln</span><span class="pas1-symbol">(</span><span class="pas1-identifier">jo</span><span class="pas1-symbol">.</span><span class="pas1-identifier">getjsonobject</span><span class="pas1-symbol">(</span><span class="pas1-string">'flags'</span><span class="pas1-symbol">).</span><span class="pas1-identifier">getstring</span><span class="pas1-symbol">(</span><span class="pas1-string">'png'</span><span class="pas1-symbol">))</span><span class="pas1-space">   
+     openweb</span><span class="pas1-symbol">(</span><span class="pas1-identifier">jo</span><span class="pas1-symbol">.</span><span class="pas1-identifier">getjsonobject</span><span class="pas1-symbol">(</span><span class="pas1-string">'flags'</span><span class="pas1-symbol">).</span><span class="pas1-identifier">getstring</span><span class="pas1-symbol">(</span><span class="pas1-string">'png'</span><span class="pas1-symbol">));</span><span class="pas1-space">    
+  </span><span class="pas1-reservedword">except</span><span class="pas1-space">  
+    </span><span class="pas1-comment">//writeln('Error: '+mapstrm.datastring);
+</span><span class="pas1-space">    writeln</span><span class="pas1-symbol">(</span><span class="pas1-string">'E: '</span><span class="pas1-symbol">+</span><span class="pas1-identifier">ExceptiontoString</span><span class="pas1-symbol">(</span><span class="pas1-identifier">exceptiontype</span><span class="pas1-symbol">,</span><span class="pas1-space"> exceptionparam</span><span class="pas1-symbol">));</span><span class="pas1-space">   
+  </span><span class="pas1-reservedword">finally
+</span><span class="pas1-space">    mapStrm</span><span class="pas1-symbol">.</span><span class="pas1-identifier">Free</span><span class="pas1-symbol">;</span><span class="pas1-space">                                 
+    encodURL</span><span class="pas1-symbol">:=</span><span class="pas1-space"> </span><span class="pas1-string">''</span><span class="pas1-symbol">;
+</span><span class="pas1-space">    jo</span><span class="pas1-symbol">.</span><span class="pas1-identifier">Free</span><span class="pas1-symbol">;
+</span><span class="pas1-space">    </span><span class="pas1-comment">//ajar.Free; //jo2.Free;
+</span><span class="pas1-space">  </span><span class="pas1-reservedword">end</span><span class="pas1-symbol">;
+</span><span class="pas1-reservedword">end</span><span class="pas1-symbol">;
+
+</span><span class="pas1-reservedword">function</span><span class="pas1-space"> RemoveChars2</span><span class="pas1-symbol">(</span><span class="pas1-identifier">sourceString</span><span class="pas1-symbol">:</span><span class="pas1-space"> </span><span class="pas1-reservedword">string</span><span class="pas1-symbol">;</span><span class="pas1-space"> sCharsToBeRemoved</span><span class="pas1-symbol">:</span><span class="pas1-space"> </span><span class="pas1-reservedword">string</span><span class="pas1-symbol">):</span><span class="pas1-reservedword">string</span><span class="pas1-symbol">;
+</span><span class="pas1-reservedword">var</span><span class="pas1-space"> I</span><span class="pas1-symbol">:</span><span class="pas1-space"> Integer</span><span class="pas1-symbol">;
+</span><span class="pas1-reservedword">begin
+</span><span class="pas1-space">  </span><span class="pas1-comment">//Prepare enpty string for our result str to which we will be copying our end characters
+</span><span class="pas1-space">  result </span><span class="pas1-symbol">:=</span><span class="pas1-space"> </span><span class="pas1-string">''</span><span class="pas1-symbol">;
+</span><span class="pas1-space">  </span><span class="pas1-comment">//Loop through the whole string
+</span><span class="pas1-space">  </span><span class="pas1-reservedword">for</span><span class="pas1-space"> I </span><span class="pas1-symbol">:=</span><span class="pas1-space"> </span><span class="pas1-number">1</span><span class="pas1-space"> </span><span class="pas1-reservedword">to</span><span class="pas1-space"> Length</span><span class="pas1-symbol">(</span><span class="pas1-identifier">sourceString</span><span class="pas1-symbol">)</span><span class="pas1-space"> </span><span class="pas1-reservedword">do</span><span class="pas1-space"> </span><span class="pas1-reservedword">begin
+</span><span class="pas1-space">    </span><span class="pas1-comment">//If specific haracter can't be found in sCharsToBeRemoved copy that character to the 
+</span><span class="pas1-space">    </span><span class="pas1-comment">//result string
+</span><span class="pas1-space">    </span><span class="pas1-reservedword">if</span><span class="pas1-space"> Pos</span><span class="pas1-symbol">(</span><span class="pas1-identifier">sourceString</span><span class="pas1-symbol">[</span><span class="pas1-identifier">I</span><span class="pas1-symbol">],</span><span class="pas1-space"> sCharsToBeRemoved</span><span class="pas1-symbol">)</span><span class="pas1-space"> </span><span class="pas1-symbol">=</span><span class="pas1-space"> </span><span class="pas1-number">0</span><span class="pas1-space"> </span><span class="pas1-reservedword">then</span><span class="pas1-space"> </span><span class="pas1-reservedword">begin
+</span><span class="pas1-space">      result </span><span class="pas1-symbol">:=</span><span class="pas1-space"> result </span><span class="pas1-symbol">+</span><span class="pas1-space"> sourceString</span><span class="pas1-symbol">[</span><span class="pas1-identifier">I</span><span class="pas1-symbol">];
+</span><span class="pas1-space">    </span><span class="pas1-reservedword">end</span><span class="pas1-symbol">;
+</span><span class="pas1-space">  </span><span class="pas1-reservedword">end</span><span class="pas1-symbol">;
+</span><span class="pas1-reservedword">end</span><span class="pas1-symbol">;
+
+
+</span><span class="pas1-comment">//https://www.quora.com/What-factorial-has-precisely-23-zeros
+</span><span class="pas1-reservedword">procedure</span><span class="pas1-space"> PyCodeQuora</span><span class="pas1-symbol">(</span><span class="pas1-identifier">imgpath</span><span class="pas1-symbol">:</span><span class="pas1-space"> </span><span class="pas1-reservedword">string</span><span class="pas1-symbol">);
+</span><span class="pas1-reservedword">begin
+</span><span class="pas1-space">  </span><span class="pas1-reservedword">with</span><span class="pas1-space"> TPythonEngine</span><span class="pas1-symbol">.</span><span class="pas1-identifier">Create</span><span class="pas1-symbol">(</span><span class="pas1-reservedword">Nil</span><span class="pas1-symbol">)</span><span class="pas1-space"> </span><span class="pas1-reservedword">do</span><span class="pas1-space"> </span><span class="pas1-reservedword">begin
+</span><span class="pas1-space">  pythonhome</span><span class="pas1-symbol">:=</span><span class="pas1-space"> </span><span class="pas1-string">'C:\Users\max\AppData\Local\Programs\Python\Python36-32\'</span><span class="pas1-symbol">;
+</span><span class="pas1-space">  </span><span class="pas1-reservedword">try
+</span><span class="pas1-space">    loadDLL</span><span class="pas1-symbol">;
+</span><span class="pas1-space">    ExecString</span><span class="pas1-symbol">(</span><span class="pas1-string">'from math import factorial'</span><span class="pas1-symbol">);
+</span><span class="pas1-space">    Println</span><span class="pas1-symbol">(</span><span class="pas1-identifier">EvalStr</span><span class="pas1-symbol">(</span><span class="pas1-string">'[n for n in range(5*24) if str(factorial(n)).count(&quot;0&quot;)==23]'</span><span class="pas1-symbol">));</span><span class="pas1-space">  
+  </span><span class="pas1-reservedword">except
+</span><span class="pas1-space">    raiseError</span><span class="pas1-symbol">;</span><span class="pas1-space">        
+  </span><span class="pas1-reservedword">finally</span><span class="pas1-space"> 
+    unloadDLL</span><span class="pas1-symbol">;</span><span class="pas1-space">      
+    free</span><span class="pas1-symbol">;
+</span><span class="pas1-space">  </span><span class="pas1-reservedword">end</span><span class="pas1-symbol">;</span><span class="pas1-space"> 
+ </span><span class="pas1-reservedword">end</span><span class="pas1-symbol">;
+</span><span class="pas1-reservedword">end</span><span class="pas1-symbol">;</span><span class="pas1-space"> 
+
+</span><span class="pas1-reservedword">procedure</span><span class="pas1-space"> PaCodeQuora</span><span class="pas1-symbol">(</span><span class="pas1-identifier">factpath</span><span class="pas1-symbol">:</span><span class="pas1-space"> integer</span><span class="pas1-symbol">);
+</span><span class="pas1-reservedword">begin
+</span><span class="pas1-space">  </span><span class="pas1-reservedword">try
+</span><span class="pas1-space">    </span><span class="pas1-reservedword">for</span><span class="pas1-space"> </span><span class="pas1-reservedword">it</span><span class="pas1-symbol">:=</span><span class="pas1-space"> </span><span class="pas1-number">1</span><span class="pas1-space"> </span><span class="pas1-reservedword">to</span><span class="pas1-space"> factpath </span><span class="pas1-reservedword">do</span><span class="pas1-space"> 
+      </span><span class="pas1-reservedword">if</span><span class="pas1-space"> jCountChar</span><span class="pas1-symbol">(</span><span class="pas1-identifier">bigfact</span><span class="pas1-symbol">(</span><span class="pas1-reservedword">it</span><span class="pas1-symbol">),</span><span class="pas1-string">'0'</span><span class="pas1-symbol">)=23</span><span class="pas1-space"> </span><span class="pas1-reservedword">then</span><span class="pas1-space"> write</span><span class="pas1-symbol">(</span><span class="pas1-identifier">itoa</span><span class="pas1-symbol">(</span><span class="pas1-reservedword">it</span><span class="pas1-symbol">)+</span><span class="pas1-string">','</span><span class="pas1-symbol">);
+</span><span class="pas1-space">    </span><span class="pas1-comment">//jCountChar( const s :Str; ch : char) : Int; 
+</span><span class="pas1-space">    writeln</span><span class="pas1-symbol">(</span><span class="pas1-string">''</span><span class="pas1-symbol">);
+</span><span class="pas1-space">  </span><span class="pas1-reservedword">except
+</span><span class="pas1-space">    </span><span class="pas1-comment">//raiseError;  
+</span><span class="pas1-space">    writeln</span><span class="pas1-symbol">(</span><span class="pas1-string">'EPa: '</span><span class="pas1-symbol">+</span><span class="pas1-identifier">ExceptiontoString</span><span class="pas1-symbol">(</span><span class="pas1-identifier">exceptiontype</span><span class="pas1-symbol">,</span><span class="pas1-space"> exceptionparam</span><span class="pas1-symbol">));</span><span class="pas1-space">       
+  </span><span class="pas1-reservedword">end</span><span class="pas1-symbol">;</span><span class="pas1-space"> 
+</span><span class="pas1-reservedword">end</span><span class="pas1-symbol">;</span><span class="pas1-space"> 
+
+
+ </span><span class="pas1-comment">//var   IDoc: IHTMLDocument2;
+</span><span class="pas1-reservedword">var</span><span class="pas1-space"> </span><span class="pas1-reservedword">regEx</span><span class="pas1-symbol">:</span><span class="pas1-space"> TRegExpr</span><span class="pas1-symbol">;</span><span class="pas1-space"> </span><span class="pas1-comment">//or OleVariant if HISUtils;
+</span><span class="pas1-space">    envlist</span><span class="pas1-symbol">:</span><span class="pas1-space"> Tstringlist</span><span class="pas1-symbol">;</span><span class="pas1-space"> bbb</span><span class="pas1-symbol">:</span><span class="pas1-space"> TBytes</span><span class="pas1-symbol">;
+</span><span class="pas1-space">    DaysDiff</span><span class="pas1-symbol">:</span><span class="pas1-space"> Double</span><span class="pas1-symbol">;
+
+</span><span class="pas1-reservedword">begin</span><span class="pas1-space">  </span><span class="pas1-comment">//@main
+</span><span class="pas1-space">  </span><span class="pas1-comment">//maxform1.ShellStyle1click(self)
+</span><span class="pas1-space">  </span><span class="pas1-reservedword">maxform1</span><span class="pas1-symbol">.</span><span class="pas1-identifier">Console1Click</span><span class="pas1-symbol">(</span><span class="pas1-identifier">self</span><span class="pas1-symbol">)
+</span><span class="pas1-space">  
+  writeln</span><span class="pas1-symbol">(</span><span class="pas1-string">'Back of weatherjs capital Bern: '</span><span class="pas1-symbol">+</span><span class="pas1-identifier">GetWeatherStreamJSON</span><span class="pas1-symbol">(</span><span class="pas1-string">'Bern,CH'</span><span class="pas1-symbol">,</span><span class="pas1-identifier">WeatherAPIKEY</span><span class="pas1-symbol">));
+</span><span class="pas1-space">  
+   DaysDiff </span><span class="pas1-symbol">:=</span><span class="pas1-space"> now </span><span class="pas1-symbol">-</span><span class="pas1-space"> strtodate</span><span class="pas1-symbol">(</span><span class="pas1-string">'20/06/1959'</span><span class="pas1-symbol">);
+</span><span class="pas1-space">    writeln</span><span class="pas1-symbol">(</span><span class="pas1-identifier">FloatToStr</span><span class="pas1-symbol">(</span><span class="pas1-identifier">DaysDiff</span><span class="pas1-symbol">));
+</span><span class="pas1-space">    writeln</span><span class="pas1-symbol">(</span><span class="pas1-identifier">FloatToStr</span><span class="pas1-symbol">(</span><span class="pas1-identifier">trunc</span><span class="pas1-symbol">(</span><span class="pas1-identifier">DaysDiff</span><span class="pas1-symbol">)));
+</span><span class="pas1-space">    DaysDiff </span><span class="pas1-symbol">:=</span><span class="pas1-space"> DaySpan</span><span class="pas1-symbol">(</span><span class="pas1-identifier">now</span><span class="pas1-symbol">,</span><span class="pas1-space"> strtodate</span><span class="pas1-symbol">(</span><span class="pas1-string">'20/06/1959'</span><span class="pas1-symbol">));
+</span><span class="pas1-space">    writeln</span><span class="pas1-symbol">(</span><span class="pas1-identifier">FloatToStr</span><span class="pas1-symbol">(</span><span class="pas1-identifier">trunc</span><span class="pas1-symbol">(</span><span class="pas1-identifier">DaysDiff</span><span class="pas1-symbol">)));
+</span><span class="pas1-space">    writeln</span><span class="pas1-symbol">(</span><span class="pas1-identifier">FloatToStr</span><span class="pas1-symbol">((</span><span class="pas1-identifier">DaysDiff</span><span class="pas1-symbol">)));
+</span><span class="pas1-space">   </span><span class="pas1-comment">//https://www.wolframalpha.com/input?i=difference+now+-+20.06.1959
+</span><span class="pas1-space">    
+    </span><span class="pas1-comment">//PyCodeQuora('');
+</span><span class="pas1-space">    PaCodeQuora</span><span class="pas1-symbol">(120);
+</span><span class="pas1-space">   
+   </span><span class="pas1-comment">//test with https://restcountries.com/v3.1/name/switzerland
+</span><span class="pas1-space">    </span><span class="pas1-comment">//GetRestCountriesJSON(RESTCountries,'switzerland','');
+</span><span class="pas1-space">     GetRestCountriesJSON2</span><span class="pas1-symbol">(</span><span class="pas1-identifier">RESTCountriesC</span><span class="pas1-symbol">,</span><span class="pas1-string">'bern'</span><span class="pas1-symbol">,</span><span class="pas1-string">''</span><span class="pas1-symbol">);</span><span class="pas1-space">  
+    </span><span class="pas1-comment">//GetRestCountriesJSON2(RESTCountries,'switzerland','');        
+</span><span class="pas1-space">  
+  </span><span class="pas1-comment">//writeln(itoa(JExecute('cmd /C dir *.*',@TTextHandlerQ, true, false))); 
+</span><span class="pas1-space">  </span><span class="pas1-comment">//writeln(itoa(JExecute('cmd /c wmic cpu get name',@TTextHandlerQ, true, false))); 
+</span><span class="pas1-space">  </span><span class="pas1-comment">//writeln(GETDOSOutput('cmd.exe /c wmic cpu get architecture','C:\'));
+</span><span class="pas1-space">  </span><span class="pas1-comment">//writeln(itoa(JExecute('cmd /c netstat -o',@TTextHandlerQ, true, false))); 
+</span><span class="pas1-space"> </span><span class="pas1-comment">//writeln(GETDOSOutput('powershell wget &quot;http://www.softwareschule.ch/examples/1080_trend.pas&quot;',
+</span><span class="pas1-space">  </span><span class="pas1-comment">//                                                            'C:\'));
+</span><span class="pas1-space">   
+  </span><span class="pas1-comment">{ envlist:= Tstringlist.create;
+   InStr:= filetostring(Exepath+'\Examples\vararrayofFilename_savereport.txt');
+   StrtoList(InStr, envlist, CR)
+   writeln('envlist count: '+itoa(envlist.count));
+   cnt:= 0;
+   regEx:= TRegExpr.create; //HISUtils.RegExpr;
+   regEx.Expression:='var [\w+:\w:\w :,]+ array of byte';
+   // Execute search
+   for it:= 0 to envlist.count-1 do 
+     if regEx.Exec(envlist[it]) then begin
+       writeln(itoa(cnt)+':'+envlist[it]);
+       inc(cnt)
+     end;  
+   regex.Free;
+   envlist.Free;    }
+</span><span class="pas1-space">   </span><span class="pas1-comment">//BAClear(bbb);
+</span><span class="pas1-space">       
+</span><span class="pas1-reservedword">End</span><span class="pas1-symbol">.
+
+</span><span class="pas1-reservedword">Doc</span><span class="pas1-symbol">:</span><span class="pas1-space"> https</span><span class="pas1-symbol">:</span><span class="pas1-comment">//gitlab.com/amatos/rest-countries/-/blob/master/README.md
+
+</span><span class="pas1-identifier">This API works the following way</span><span class="pas1-symbol">:</span><span class="pas1-space"> </span><span class="pas1-reservedword">it</span><span class="pas1-space"> offers the service </span><span class="pas1-reservedword">of</span><span class="pas1-space"> geocoding</span><span class="pas1-symbol">,</span><span class="pas1-space"> cartography</span><span class="pas1-symbol">,</span><span class="pas1-space"> </span><span class="pas1-reservedword">and</span><span class="pas1-space"> many other possibilities</span><span class="pas1-symbol">.</span><span class="pas1-space"> </span><span class="pas1-reservedword">In</span><span class="pas1-space"> our example</span><span class="pas1-symbol">,</span><span class="pas1-space"> we will use direct geocoding</span><span class="pas1-symbol">.</span><span class="pas1-space"> We will send the address </span><span class="pas1-reservedword">to</span><span class="pas1-space"> receive latitude</span><span class="pas1-symbol">,</span><span class="pas1-space"> longitude</span><span class="pas1-symbol">,</span><span class="pas1-space"> </span><span class="pas1-reservedword">and</span><span class="pas1-space"> the information we get via the REST Debugger</span><span class="pas1-symbol">.</span><span class="pas1-space"> </span><span class="pas1-reservedword">To</span><span class="pas1-space"> get the response we should configure the JSON root </span><span class="pas1-reservedword">using</span><span class="pas1-space"> the data element</span><span class="pas1-symbol">:
+</span><span class="pas1-space"> 
+</span><span class="pas1-reservedword">It</span><span class="pas1-space"> looks like they never renewed their SSL certificate</span><span class="pas1-symbol">.</span><span class="pas1-space"> </span><span class="pas1-reservedword">In</span><span class="pas1-space"> the meantime</span><span class="pas1-symbol">,</span><span class="pas1-space"> you can use https</span><span class="pas1-symbol">:</span><span class="pas1-comment">//restcountries.com/ is a cloned repo that I update frecuently
+
+</span><span class="pas1-space">      we download a script</span><span class="pas1-symbol">-</span><span class="pas1-reservedword">file</span><span class="pas1-space"> </span><span class="pas1-reservedword">in</span><span class="pas1-space"> powershell </span><span class="pas1-reservedword">with</span><span class="pas1-space"> wget Invoke</span><span class="pas1-symbol">-</span><span class="pas1-identifier">WebRequest open the </span><span class="pas1-reservedword">file</span><span class="pas1-space"> </span><span class="pas1-reservedword">to</span><span class="pas1-space"> check
+      the content</span><span class="pas1-symbol">,</span><span class="pas1-space"> </span><span class="pas1-reservedword">then</span><span class="pas1-space"> execute the script </span><span class="pas1-reservedword">and</span><span class="pas1-space"> get the result back </span><span class="pas1-reservedword">to</span><span class="pas1-space"> </span><span class="pas1-reservedword">maXbox</span><span class="pas1-symbol">-</span><span class="pas1-identifier">console </span><span class="pas1-reservedword">as</span><span class="pas1-space"> </span><span class="pas1-reservedword">memo2</span><span class="pas1-symbol">.
+</span><span class="pas1-space">      Hint</span><span class="pas1-symbol">:</span><span class="pas1-space"> needs a </span><span class="pas1-symbol">\</span><span class="pas1-identifier">examples dir otherwise 
+      
+      REPL </span><span class="pas1-symbol">:</span><span class="pas1-space"> 
+      https</span><span class="pas1-symbol">:</span><span class="pas1-comment">//meet.google.com/pxu-nehx-qzp
+</span><span class="pas1-space">      
+      gryzzly </span><span class="pas1-symbol">-</span><span class="pas1-space"> gr</span><span class="pas1-symbol">&auml;</span><span class="pas1-identifier">ulich</span><span class="pas1-symbol">,</span><span class="pas1-space"> grisly </span><span class="pas1-symbol">-</span><span class="pas1-space"> grausig  </span><span class="pas1-symbol">(</span><span class="pas1-identifier">ghastly awful</span><span class="pas1-symbol">)</span><span class="pas1-space"> </span><span class="pas1-symbol">-</span><span class="pas1-space"> gr</span><span class="pas1-symbol">&auml;</span><span class="pas1-identifier">sslich
+
+   https</span><span class="pas1-symbol">:</span><span class="pas1-comment">//rapidapi.com/collection/list-of-free-apis               
+</span><span class="pas1-space">   https</span><span class="pas1-symbol">:</span><span class="pas1-comment">//wiki.delphi-jedi.org/wiki/JCL_Help:Execute@string@string@Boolean@PBoolean
+</span><span class="pas1-space">   https</span><span class="pas1-symbol">:</span><span class="pas1-comment">//docs.microsoft.com/en-us/windows/win32/debug/system-error-codes--0-499-
+
+</span><span class="pas1-space">    writeln</span><span class="pas1-symbol">(</span><span class="pas1-identifier">GETDOSOutput</span><span class="pas1-symbol">(</span><span class="pas1-string">'cmd.exe /c wmic cpu get architecture'</span><span class="pas1-symbol">,</span><span class="pas1-string">'C:\'</span><span class="pas1-symbol">));
+</span><span class="pas1-space">    writeln</span><span class="pas1-symbol">(</span><span class="pas1-identifier">GETDOSOutput</span><span class="pas1-symbol">(</span><span class="pas1-string">'cmd.exe /c wmic cpu get name'</span><span class="pas1-symbol">,</span><span class="pas1-string">'C:\'</span><span class="pas1-symbol">));
+</span><span class="pas1-space">    </span><span class="pas1-comment">//to monitor tcp spyware over PID - process ID
+</span><span class="pas1-space">    </span><span class="pas1-reservedword">memo2</span><span class="pas1-symbol">.</span><span class="pas1-identifier">setFocus</span><span class="pas1-symbol">;
+</span><span class="pas1-space">    </span><span class="pas1-reservedword">repeat
+</span><span class="pas1-space">      writeln</span><span class="pas1-symbol">(</span><span class="pas1-identifier">GETDOSOutput</span><span class="pas1-symbol">(</span><span class="pas1-string">'cmd.exe /c netstat -o'</span><span class="pas1-symbol">,</span><span class="pas1-string">'C:\'</span><span class="pas1-symbol">));
+</span><span class="pas1-space">      </span><span class="pas1-reservedword">memo2</span><span class="pas1-symbol">.</span><span class="pas1-identifier">color</span><span class="pas1-symbol">:=</span><span class="pas1-space"> clsilver</span><span class="pas1-symbol">;
+</span><span class="pas1-space">      sleep</span><span class="pas1-symbol">(2000)
+</span><span class="pas1-space">      </span><span class="pas1-reservedword">memo2</span><span class="pas1-symbol">.</span><span class="pas1-identifier">color</span><span class="pas1-symbol">:=</span><span class="pas1-space"> clyellow</span><span class="pas1-symbol">;</span><span class="pas1-space">    
+    </span><span class="pas1-reservedword">until</span><span class="pas1-space"> isKeyPressed</span><span class="pas1-symbol">;</span><span class="pas1-space">  
+    </span><span class="pas1-reservedword">memo2</span><span class="pas1-symbol">.</span><span class="pas1-identifier">color</span><span class="pas1-symbol">:=</span><span class="pas1-space"> clwhite</span><span class="pas1-symbol">;</span><span class="pas1-space">    
+    writeln</span><span class="pas1-symbol">(</span><span class="pas1-identifier">SysErrorMessage</span><span class="pas1-symbol">(</span><span class="pas1-identifier">GetLastError</span><span class="pas1-symbol">))
+
+</span><span class="pas1-identifier">Passwort checker</span><span class="pas1-symbol">?</span><span class="pas1-space"> https</span><span class="pas1-symbol">:</span><span class="pas1-comment">//haveibeenpwned.com
+</span><span class="pas1-identifier">https</span><span class="pas1-symbol">:</span><span class="pas1-comment">//dnslytics.com/spf-lookup  
+
+</span><span class="pas1-reservedword">procedure</span><span class="pas1-space"> RunDosInMemo</span><span class="pas1-symbol">(</span><span class="pas1-identifier">DosApp</span><span class="pas1-symbol">:</span><span class="pas1-space"> </span><span class="pas1-reservedword">string</span><span class="pas1-symbol">;</span><span class="pas1-space"> AMemo</span><span class="pas1-symbol">:</span><span class="pas1-identifier">TMemo</span><span class="pas1-symbol">);
+</span><span class="pas1-reservedword">const
+</span><span class="pas1-space">    READ_BUFFER_SIZE </span><span class="pas1-symbol">=</span><span class="pas1-space"> </span><span class="pas1-number">2400;
+</span><span class="pas1-reservedword">var
+</span><span class="pas1-space">    Security</span><span class="pas1-symbol">:</span><span class="pas1-space"> TSecurityAttributes</span><span class="pas1-symbol">;
+</span><span class="pas1-space">    readableEndOfPipe</span><span class="pas1-symbol">,</span><span class="pas1-space"> writeableEndOfPipe</span><span class="pas1-symbol">:</span><span class="pas1-space"> THandle</span><span class="pas1-symbol">;
+</span><span class="pas1-space">    start</span><span class="pas1-symbol">:</span><span class="pas1-space"> TStartUpInfo</span><span class="pas1-symbol">;
+</span><span class="pas1-space">    ProcessInfo</span><span class="pas1-symbol">:</span><span class="pas1-space"> TProcessInformation</span><span class="pas1-symbol">;
+</span><span class="pas1-space">    Buffer</span><span class="pas1-symbol">:</span><span class="pas1-space"> PAnsiChar</span><span class="pas1-symbol">;
+</span><span class="pas1-space">    BytesRead</span><span class="pas1-symbol">,</span><span class="pas1-space"> AppRunning</span><span class="pas1-symbol">:</span><span class="pas1-space"> DWORD</span><span class="pas1-symbol">;
+</span><span class="pas1-reservedword">begin
+</span><span class="pas1-space">    Security</span><span class="pas1-symbol">.</span><span class="pas1-identifier">nLength </span><span class="pas1-symbol">:=</span><span class="pas1-space"> SizeOf</span><span class="pas1-symbol">(</span><span class="pas1-identifier">TSecurityAttributes</span><span class="pas1-symbol">);
+</span><span class="pas1-space">    Security</span><span class="pas1-symbol">.</span><span class="pas1-identifier">bInheritHandle </span><span class="pas1-symbol">:=</span><span class="pas1-space"> True</span><span class="pas1-symbol">;
+</span><span class="pas1-space">    Security</span><span class="pas1-symbol">.</span><span class="pas1-identifier">lpSecurityDescriptor </span><span class="pas1-symbol">:=</span><span class="pas1-space"> </span><span class="pas1-reservedword">nil</span><span class="pas1-symbol">;
+
+</span><span class="pas1-space">    </span><span class="pas1-reservedword">if</span><span class="pas1-space"> CreatePipe</span><span class="pas1-symbol">(</span><span class="pas1-comment">{var}</span><span class="pas1-identifier">readableEndOfPipe</span><span class="pas1-symbol">,</span><span class="pas1-space"> </span><span class="pas1-comment">{var}</span><span class="pas1-identifier">writeableEndOfPipe</span><span class="pas1-symbol">,</span><span class="pas1-space"> </span><span class="pas1-symbol">@</span><span class="pas1-identifier">Security</span><span class="pas1-symbol">,</span><span class="pas1-space"> </span><span class="pas1-number">0)</span><span class="pas1-space"> </span><span class="pas1-reservedword">then</span><span class="pas1-space"> </span><span class="pas1-reservedword">begin
+</span><span class="pas1-space">        Buffer </span><span class="pas1-symbol">:=</span><span class="pas1-space"> AllocMem</span><span class="pas1-symbol">(</span><span class="pas1-identifier">READ_BUFFER_SIZE</span><span class="pas1-symbol">+1);
+</span><span class="pas1-space">        FillChar</span><span class="pas1-symbol">(</span><span class="pas1-identifier">Start</span><span class="pas1-symbol">,</span><span class="pas1-space"> Sizeof</span><span class="pas1-symbol">(</span><span class="pas1-identifier">Start</span><span class="pas1-symbol">),</span><span class="pas1-space"> </span><span class="pas1-character">#0</span><span class="pas1-symbol">);
+</span><span class="pas1-space">        start</span><span class="pas1-symbol">.</span><span class="pas1-identifier">cb </span><span class="pas1-symbol">:=</span><span class="pas1-space"> SizeOf</span><span class="pas1-symbol">(</span><span class="pas1-identifier">start</span><span class="pas1-symbol">);
+
+</span><span class="pas1-space">        </span><span class="pas1-comment">// Set up members of the STARTUPINFO structure.
+</span><span class="pas1-space">        </span><span class="pas1-comment">// This structure specifies the STDIN and STDOUT handles for redirection.
+</span><span class="pas1-space">        </span><span class="pas1-comment">// - Redirect the output and error to the writeable end of our pipe.
+</span><span class="pas1-space">        </span><span class="pas1-comment">// - We must still supply a valid StdInput handle (because we used STARTF_USESTDHANDLES to swear that all three handles will be valid)
+</span><span class="pas1-space">        start</span><span class="pas1-symbol">.</span><span class="pas1-identifier">dwFlags </span><span class="pas1-symbol">:=</span><span class="pas1-space"> start</span><span class="pas1-symbol">.</span><span class="pas1-identifier">dwFlags </span><span class="pas1-reservedword">or</span><span class="pas1-space"> STARTF_USESTDHANDLES</span><span class="pas1-symbol">;
+</span><span class="pas1-space">        start</span><span class="pas1-symbol">.</span><span class="pas1-identifier">hStdInput </span><span class="pas1-symbol">:=</span><span class="pas1-space"> GetStdHandle</span><span class="pas1-symbol">(</span><span class="pas1-identifier">STD_INPUT_HANDLE</span><span class="pas1-symbol">);</span><span class="pas1-space"> </span><span class="pas1-comment">//we're not redirecting stdInput; but we still have to give it a valid handle
+</span><span class="pas1-space">        start</span><span class="pas1-symbol">.</span><span class="pas1-identifier">hStdOutput </span><span class="pas1-symbol">:=</span><span class="pas1-space"> writeableEndOfPipe</span><span class="pas1-symbol">;</span><span class="pas1-space"> </span><span class="pas1-comment">//we give the writeable end of the pipe to the child process; we read from the readable end
+</span><span class="pas1-space">        start</span><span class="pas1-symbol">.</span><span class="pas1-identifier">hStdError </span><span class="pas1-symbol">:=</span><span class="pas1-space"> writeableEndOfPipe</span><span class="pas1-symbol">;
+
+</span><span class="pas1-space">        </span><span class="pas1-comment">//We can also choose to say that the wShowWindow member contains a value.
+</span><span class="pas1-space">        </span><span class="pas1-comment">//In our case we want to force the console window to be hidden.
+</span><span class="pas1-space">        start</span><span class="pas1-symbol">.</span><span class="pas1-identifier">dwFlags </span><span class="pas1-symbol">:=</span><span class="pas1-space"> start</span><span class="pas1-symbol">.</span><span class="pas1-identifier">dwFlags </span><span class="pas1-symbol">+</span><span class="pas1-space"> STARTF_USESHOWWINDOW</span><span class="pas1-symbol">;
+</span><span class="pas1-space">        start</span><span class="pas1-symbol">.</span><span class="pas1-identifier">wShowWindow </span><span class="pas1-symbol">:=</span><span class="pas1-space"> SW_HIDE</span><span class="pas1-symbol">;
+
+</span><span class="pas1-space">        </span><span class="pas1-comment">// Don't forget to set up members of the PROCESS_INFORMATION structure.
+</span><span class="pas1-space">        ProcessInfo </span><span class="pas1-symbol">:=</span><span class="pas1-space"> </span><span class="pas1-reservedword">Default</span><span class="pas1-symbol">(</span><span class="pas1-identifier">TProcessInformation</span><span class="pas1-symbol">);
+
+</span><span class="pas1-space">        </span><span class="pas1-comment">//WARNING: The unicode version of CreateProcess (CreateProcessW) can modify the command-line &quot;DosApp&quot; string. 
+</span><span class="pas1-space">        </span><span class="pas1-comment">//Therefore &quot;DosApp&quot; cannot be a pointer to read-only memory, or an ACCESS_VIOLATION will occur.
+</span><span class="pas1-space">        </span><span class="pas1-comment">//We can ensure it's not read-only with the RTL function: UniqueString
+</span><span class="pas1-space">        UniqueString</span><span class="pas1-symbol">(</span><span class="pas1-comment">{var}</span><span class="pas1-identifier">DosApp</span><span class="pas1-symbol">);
+
+</span><span class="pas1-space">        </span><span class="pas1-reservedword">if</span><span class="pas1-space"> CreateProcess</span><span class="pas1-symbol">(</span><span class="pas1-reservedword">nil</span><span class="pas1-symbol">,</span><span class="pas1-space"> PChar</span><span class="pas1-symbol">(</span><span class="pas1-identifier">DosApp</span><span class="pas1-symbol">),</span><span class="pas1-space"> </span><span class="pas1-reservedword">nil</span><span class="pas1-symbol">,</span><span class="pas1-space"> </span><span class="pas1-reservedword">nil</span><span class="pas1-symbol">,</span><span class="pas1-space"> True</span><span class="pas1-symbol">,</span><span class="pas1-space"> NORMAL_PRIORITY_CLASS</span><span class="pas1-symbol">,</span><span class="pas1-space"> </span><span class="pas1-reservedword">nil</span><span class="pas1-symbol">,</span><span class="pas1-space"> </span><span class="pas1-reservedword">nil</span><span class="pas1-symbol">,</span><span class="pas1-space"> start</span><span class="pas1-symbol">,</span><span class="pas1-space"> </span><span class="pas1-comment">{var}</span><span class="pas1-identifier">ProcessInfo</span><span class="pas1-symbol">)</span><span class="pas1-space"> </span><span class="pas1-reservedword">then</span><span class="pas1-space"> </span><span class="pas1-reservedword">begin
+</span><span class="pas1-space">            </span><span class="pas1-comment">//Wait for the application to terminate, as it writes it's output to the pipe.
+</span><span class="pas1-space">            </span><span class="pas1-comment">//WARNING: If the console app outputs more than 2400 bytes (ReadBuffer),
+</span><span class="pas1-space">            </span><span class="pas1-comment">//it will block on writing to the pipe and *never* close.
+</span><span class="pas1-space">            </span><span class="pas1-reservedword">repeat
+</span><span class="pas1-space">                Apprunning </span><span class="pas1-symbol">:=</span><span class="pas1-space"> WaitForSingleObject</span><span class="pas1-symbol">(</span><span class="pas1-identifier">ProcessInfo</span><span class="pas1-symbol">.</span><span class="pas1-identifier">hProcess</span><span class="pas1-symbol">,</span><span class="pas1-space"> </span><span class="pas1-number">100);
+</span><span class="pas1-space">                Application</span><span class="pas1-symbol">.</span><span class="pas1-identifier">ProcessMessages</span><span class="pas1-symbol">;
+</span><span class="pas1-space">            </span><span class="pas1-reservedword">until</span><span class="pas1-space"> </span><span class="pas1-symbol">(</span><span class="pas1-identifier">Apprunning </span><span class="pas1-symbol">&lt;&gt;</span><span class="pas1-space"> WAIT_TIMEOUT</span><span class="pas1-symbol">);
+
+</span><span class="pas1-space">            </span><span class="pas1-comment">//Read the contents of the pipe out of the readable end
+</span><span class="pas1-space">            </span><span class="pas1-comment">//WARNING: if the console app never writes anything to the StdOutput, then ReadFile will block and never return
+</span><span class="pas1-space">            </span><span class="pas1-reservedword">repeat
+</span><span class="pas1-space">                BytesRead </span><span class="pas1-symbol">:=</span><span class="pas1-space"> </span><span class="pas1-number">0;
+</span><span class="pas1-space">                ReadFile</span><span class="pas1-symbol">(</span><span class="pas1-identifier">readableEndOfPipe</span><span class="pas1-symbol">,</span><span class="pas1-space"> Buffer</span><span class="pas1-symbol">[0],</span><span class="pas1-space"> READ_BUFFER_SIZE</span><span class="pas1-symbol">,</span><span class="pas1-space"> </span><span class="pas1-comment">{var}</span><span class="pas1-identifier">BytesRead</span><span class="pas1-symbol">,</span><span class="pas1-space"> </span><span class="pas1-reservedword">nil</span><span class="pas1-symbol">);
+</span><span class="pas1-space">                Buffer</span><span class="pas1-symbol">[</span><span class="pas1-identifier">BytesRead</span><span class="pas1-symbol">]:=</span><span class="pas1-space"> </span><span class="pas1-character">#0</span><span class="pas1-symbol">;
+</span><span class="pas1-space">                OemToAnsi</span><span class="pas1-symbol">(</span><span class="pas1-identifier">Buffer</span><span class="pas1-symbol">,</span><span class="pas1-identifier">Buffer</span><span class="pas1-symbol">);
+</span><span class="pas1-space">                AMemo</span><span class="pas1-symbol">.</span><span class="pas1-identifier">Text </span><span class="pas1-symbol">:=</span><span class="pas1-space"> AMemo</span><span class="pas1-symbol">.</span><span class="pas1-identifier">text </span><span class="pas1-symbol">+</span><span class="pas1-space"> </span><span class="pas1-reservedword">String</span><span class="pas1-symbol">(</span><span class="pas1-identifier">Buffer</span><span class="pas1-symbol">);
+</span><span class="pas1-space">            </span><span class="pas1-reservedword">until</span><span class="pas1-space"> </span><span class="pas1-symbol">(</span><span class="pas1-identifier">BytesRead </span><span class="pas1-symbol">&lt;</span><span class="pas1-space"> READ_BUFFER_SIZE</span><span class="pas1-symbol">);
+</span><span class="pas1-space">        </span><span class="pas1-reservedword">end</span><span class="pas1-symbol">;
+</span><span class="pas1-space">        FreeMem</span><span class="pas1-symbol">(</span><span class="pas1-identifier">Buffer</span><span class="pas1-symbol">);
+</span><span class="pas1-space">        CloseHandle</span><span class="pas1-symbol">(</span><span class="pas1-identifier">ProcessInfo</span><span class="pas1-symbol">.</span><span class="pas1-identifier">hProcess</span><span class="pas1-symbol">);
+</span><span class="pas1-space">        CloseHandle</span><span class="pas1-symbol">(</span><span class="pas1-identifier">ProcessInfo</span><span class="pas1-symbol">.</span><span class="pas1-identifier">hThread</span><span class="pas1-symbol">);
+</span><span class="pas1-space">        CloseHandle</span><span class="pas1-symbol">(</span><span class="pas1-identifier">readableEndOfPipe</span><span class="pas1-symbol">);
+</span><span class="pas1-space">        CloseHandle</span><span class="pas1-symbol">(</span><span class="pas1-identifier">writeableEndOfPipe</span><span class="pas1-symbol">);
+</span><span class="pas1-space">    </span><span class="pas1-reservedword">end</span><span class="pas1-symbol">;
+</span><span class="pas1-reservedword">end</span><span class="pas1-symbol">;
+
+</span><span class="pas1-reservedword">procedure</span><span class="pas1-space"> TForm1</span><span class="pas1-symbol">.</span><span class="pas1-identifier">Button1Click</span><span class="pas1-symbol">(</span><span class="pas1-identifier">Sender</span><span class="pas1-symbol">:</span><span class="pas1-space"> TObject</span><span class="pas1-symbol">);
+</span><span class="pas1-reservedword">begin</span><span class="pas1-space"> </span><span class="pas1-comment">{button 1 code}
+</span><span class="pas1-space">   RunDosInMemo</span><span class="pas1-symbol">(</span><span class="pas1-string">'chkdsk.exe c:\'</span><span class="pas1-symbol">,</span><span class="pas1-reservedword">Memo1</span><span class="pas1-symbol">);
+</span><span class="pas1-reservedword">end</span><span class="pas1-symbol">;
+
+</span><span class="pas1-identifier">CL</span><span class="pas1-symbol">.</span><span class="pas1-identifier">AddDelphiFunction</span><span class="pas1-symbol">(</span><span class="pas1-string">'procedure RunDosInMemo(DosApp: string; AMemo:TMemo);'</span><span class="pas1-symbol">);
+
+</span><span class="pas1-identifier">ShellExecute</span><span class="pas1-symbol">(0,</span><span class="pas1-space"> </span><span class="pas1-string">'open'</span><span class="pas1-symbol">,</span><span class="pas1-space"> Pchar</span><span class="pas1-symbol">(</span><span class="pas1-string">'DocumentName.pdf'</span><span class="pas1-symbol">),</span><span class="pas1-space"> </span><span class="pas1-string">''</span><span class="pas1-symbol">,</span><span class="pas1-space"> </span><span class="pas1-string">''</span><span class="pas1-symbol">,</span><span class="pas1-space"> SW_SHOWNORMAL</span><span class="pas1-symbol">);
+
+</span><span class="pas1-identifier">work under Windows </span><span class="pas1-number">7</span><span class="pas1-space"> </span><span class="pas1-reservedword">and</span><span class="pas1-space"> </span><span class="pas1-number">8,</span><span class="pas1-space"> which would start the Acrobat Reader </span><span class="pas1-reservedword">and</span><span class="pas1-space"> open the </span><span class="pas1-reservedword">file</span><span class="pas1-space"> but under Windows </span><span class="pas1-number">10</span><span class="pas1-space"> this no longer </span><span class="pas1-reservedword">is</span><span class="pas1-space"> the </span><span class="pas1-reservedword">case</span><span class="pas1-symbol">.</span><span class="pas1-space"> So the next step was </span><span class="pas1-reservedword">to</span><span class="pas1-space"> update the call </span><span class="pas1-reservedword">to</span><span class="pas1-space"> use ShellExecuteEX instead</span><span class="pas1-symbol">.
+</span><span class="pas1-identifier">ShellInfo </span><span class="pas1-symbol">:=</span><span class="pas1-space"> </span><span class="pas1-reservedword">Default</span><span class="pas1-symbol">(</span><span class="pas1-identifier">TShellExecuteInfo</span><span class="pas1-symbol">);
+</span><span class="pas1-identifier">ShellInfo</span><span class="pas1-symbol">.</span><span class="pas1-identifier">cbSize </span><span class="pas1-symbol">:=</span><span class="pas1-space"> SizeOf</span><span class="pas1-symbol">(</span><span class="pas1-identifier">TShellExecuteInfo</span><span class="pas1-symbol">);
+</span><span class="pas1-identifier">ShellInfo</span><span class="pas1-symbol">.</span><span class="pas1-identifier">lpFile </span><span class="pas1-symbol">:=</span><span class="pas1-space"> PChar</span><span class="pas1-symbol">(</span><span class="pas1-identifier">Current_Client_Documents </span><span class="pas1-symbol">+</span><span class="pas1-space"> FileName </span><span class="pas1-symbol">+</span><span class="pas1-string">'.pdf'</span><span class="pas1-symbol">);
+</span><span class="pas1-identifier">ShellInfo</span><span class="pas1-symbol">.</span><span class="pas1-identifier">nShow </span><span class="pas1-symbol">:=</span><span class="pas1-space"> SW_SHOWNORMAL</span><span class="pas1-symbol">;
+
+</span><span class="pas1-reservedword">try
+</span><span class="pas1-identifier">ShellExecuteEx</span><span class="pas1-symbol">(@</span><span class="pas1-identifier">ShellInfo</span><span class="pas1-symbol">);
+
+</span><span class="pas1-identifier">The actual code will prepare the </span><span class="pas1-reservedword">Object</span><span class="pas1-space"> ShellInfo </span><span class="pas1-reservedword">to</span><span class="pas1-space"> contain all </span><span class="pas1-reservedword">of</span><span class="pas1-space"> the necessary data </span><span class="pas1-reservedword">to</span><span class="pas1-space"> start up the Acrobat Reader </span><span class="pas1-reservedword">and</span><span class="pas1-space"> display the generated PDF</span><span class="pas1-symbol">.
+
+</span><span class="pas1-space"> mX4 executed</span><span class="pas1-symbol">:</span><span class="pas1-space"> </span><span class="pas1-number">30/08/2022</span><span class="pas1-space"> </span><span class="pas1-number">16:07:02</span><span class="pas1-space">  Runtime</span><span class="pas1-symbol">:</span><span class="pas1-space"> </span><span class="pas1-number">0:0:</span><span class="pas1-float">2.369</span><span class="pas1-space">  Memload</span><span class="pas1-symbol">:</span><span class="pas1-space"> </span><span class="pas1-number">45%</span><span class="pas1-space"> use
+ mX4 executed</span><span class="pas1-symbol">:</span><span class="pas1-space"> </span><span class="pas1-number">07/09/2022</span><span class="pas1-space"> </span><span class="pas1-number">09:07:56</span><span class="pas1-space">  Runtime</span><span class="pas1-symbol">:</span><span class="pas1-space"> </span><span class="pas1-number">0:0:</span><span class="pas1-float">9.906</span><span class="pas1-space">  Memload</span><span class="pas1-symbol">:</span><span class="pas1-space"> </span><span class="pas1-number">45%</span><span class="pas1-space"> use
+ mX4 executed</span><span class="pas1-symbol">:</span><span class="pas1-space"> </span><span class="pas1-number">07/09/2022</span><span class="pas1-space"> </span><span class="pas1-number">10:23:00</span><span class="pas1-space">  Runtime</span><span class="pas1-symbol">:</span><span class="pas1-space"> </span><span class="pas1-number">0:0:</span><span class="pas1-float">9.134</span><span class="pas1-space">  Memload</span><span class="pas1-symbol">:</span><span class="pas1-space"> </span><span class="pas1-number">45%</span><span class="pas1-space"> use
+ 
+  
+ 
+https</span><span class="pas1-symbol">:</span><span class="pas1-comment">//my6.code.blog/2022/09/02/webpostdata/
+
+</span><span class="pas1-identifier">Locomotive </span><span class="pas1-symbol">&eacute;</span><span class="pas1-identifier">lectrique BB26023 livr</span><span class="pas1-symbol">&eacute;</span><span class="pas1-identifier">e Corail logo Beffara </span><span class="pas1-symbol">(</span><span class="pas1-identifier">dit nouille</span><span class="pas1-symbol">).</span><span class="pas1-space"> Immatriculation </span><span class="pas1-symbol">:</span><span class="pas1-space"> BB26023</span><span class="pas1-symbol">.</span><span class="pas1-space"> </span><span class="pas1-number">324712109726</span><span class="pas1-space"> JOUEF BB26023 LOGO beffara ep v sncf oh </span><span class="pas1-number">1/87</span><span class="pas1-space"> </span><span class="pas1-symbol">-</span><span class="pas1-space"> </span><span class="pas1-symbol">&pound;</span><span class="pas1-float">146.67.
+
+</span><span class="pas1-identifier">Interpreters usually take less amount </span><span class="pas1-reservedword">of</span><span class="pas1-space"> time </span><span class="pas1-reservedword">to</span><span class="pas1-space"> analyze the source code</span><span class="pas1-symbol">.</span><span class="pas1-space"> However</span><span class="pas1-symbol">,</span><span class="pas1-space"> the overall execution time </span><span class="pas1-reservedword">is</span><span class="pas1-space"> comparatively slower than compilers</span><span class="pas1-symbol">.</span><span class="pas1-space"> A compiler scans the entire </span><span class="pas1-reservedword">program</span><span class="pas1-space"> </span><span class="pas1-reservedword">and</span><span class="pas1-space"> translates </span><span class="pas1-reservedword">it</span><span class="pas1-space"> from </span><span class="pas1-reservedword">object</span><span class="pas1-space"> code </span><span class="pas1-reservedword">as</span><span class="pas1-space"> a whole into machine code</span><span class="pas1-symbol">.</span><span class="pas1-space"> 
+  
+     
+  
+  
+  
+</span></code></pre><!--EndFragment--></body>
+</html>
