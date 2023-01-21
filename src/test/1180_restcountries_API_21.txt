@@ -10,6 +10,7 @@ program RESTcountries_Composer1;
 //https://github.com/apilayer/restcountries
 //http://www.softwareschule.ch/examples/json7.txt
 //https://gist.github.com/felipecaputo/535541dd7cfd06b5070844375fc16aa4
+//http://www.softwareschule.ch/examples/jsonlib.htm
 
 Const 
   WeatherAPIKEY='55013bf3d09cfb0619989a00ed5bed09';      
@@ -243,6 +244,33 @@ begin
   end;
 end;
 
+type
+  TReplacePair = record
+    TextValue: string;
+    ReplaceValue: string;
+  end;
+
+  TReplacePairs = array of TReplacePair;
+
+function GetReplacementPairs: TReplacePairs;
+var
+  ConfigInfo: TStringList;
+  i, Split: Integer;
+begin
+  ConfigInfo := TStringList.Create;
+  try
+    ConfigInfo.LoadFromFile('ReplacementPairs.txt');
+    SetLength(Result, ConfigInfo.Count);
+    for i := 0 to ConfigInfo.Count - 1 do begin
+      Split := Pos('|', ConfigInfo[i]);
+      Result[i].TextValue := Copy(ConfigInfo[i], 1, Split - 1);
+      Result[i].ReplaceValue := Copy(ConfigInfo[i], Split + 1, MaxInt);
+    end;
+  finally
+    ConfigInfo.Free;
+  end;
+end;
+
 
 //https://www.quora.com/What-factorial-has-precisely-23-zeros
 procedure PyCodeQuora(imgpath: string);
@@ -332,6 +360,7 @@ begin  //@main
 End.
 
 Doc: https://gitlab.com/amatos/rest-countries/-/blob/master/README.md
+https://github.com/maxkleiner/restcountries
 
 This API works the following way: it offers the service of geocoding, cartography, and many other possibilities. In our example, we will use direct geocoding. We will send the address to receive latitude, longitude, and the information we get via the REST Debugger. To get the response we should configure the JSON root using the data element:
  
