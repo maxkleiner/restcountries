@@ -52,6 +52,7 @@ The Json routine goes as follow:
 ```
 
 As raw characters:
+from https://software.hixie.ch/utilities/cgi/unicode-decoder/utf8-decoder
 ``` html
 ara,{"official":"الاتحاد السويسري","common":"سويسرا"}
 bre,{"official":"Kengevredad Suis","common":"Suis"}
