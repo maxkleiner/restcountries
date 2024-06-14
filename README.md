@@ -43,13 +43,59 @@ API Endpoints
 Below are described the REST endpoints available that you can use to search for countries
 The Json routine goes as follow:
 ``` code
-     jo:= TJSONObject.Create4(''+tmpstr+'}');  
+       jo:= TJSONObject.Create4(''+tmpstr+'}');  
        jo2:= jo.getjsonobject('translations');
         writeln('languages: '+itoa(jo2.length));
          for it:= 0 to jo2.length-1 do begin
            writeln(jo2.keys[it]+','+JSONUnescape(jo2.getstring(jo2.keys[it]),#13#10));
          end; 
 ```
+
+As raw characters:
+
+ara,{"official":"الاتحاد السويسري","common":"سويسرا"}
+bre,{"official":"Kengevredad Suis","common":"Suis"}
+ces,{"official":"Švýcarská konfederace","common":"Švýcarsko"}
+cym,{"official":"Swiss Confederation","common":"Switzerland"}
+deu,{"official":"Schweizerische Eidgenossenschaft","common":"Schweiz"}
+est,{"official":"Šveitsi Konföderatsioon","common":"Šveits"}
+fin,{"official":"Sveitsin valaliitto","common":"Sveitsi"}
+fra,{"official":"Confédération suisse","common":"Suisse"}
+hrv,{"official":"švicarska Konfederacija","common":"Švicarska"}
+hun,{"official":"Svájc","common":"Svájc"}
+ita,{"official":"Confederazione svizzera","common":"Svizzera"}
+jpn,{"official":"スイス連邦","common":"スイス"}
+nld,{"official":"Zwitserse Confederatie","common":"Zwitserland"}
+per,{"official":"کنفدراسیون سوئیس","common":"سوئیس"}
+pol,{"official":"Konfederacja Szwajcarska","common":"Szwajcaria"}
+por,{"official":"Confederação Suíça","common":"Suíça"}
+
+languages: 25 JSON Unescaped
+ara,{"official":"Ø§Ù„Ø§ØªØ­Ø§Ø¯ Ø§Ù„Ø³ÙˆÙŠØ³Ø±ÙŠ","common":"Ø³ÙˆÙŠØ³Ø±Ø§"}
+bre,{"official":"Kengevredad Suis","common":"Suis"}
+ces,{"official":"Å vÃ½carskÃ¡ konfederace","common":"Å vÃ½carsko"}
+cym,{"official":"Swiss Confederation","common":"Switzerland"}
+deu,{"official":"Schweizerische Eidgenossenschaft","common":"Schweiz"}
+est,{"official":"Å veitsi KonfÃ¶deratsioon","common":"Å veits"}
+fin,{"official":"Sveitsin valaliitto","common":"Sveitsi"}
+fra,{"official":"ConfÃ©dÃ©ration suisse","common":"Suisse"}
+hrv,{"official":"Å¡vicarska Konfederacija","common":"Å vicarska"}
+hun,{"official":"SvÃ¡jc","common":"SvÃ¡jc"}
+ita,{"official":"Confederazione svizzera","common":"Svizzera"}
+jpn,{"official":"ã‚¹ã‚¤ã‚¹é€£é‚¦","common":"ã‚¹ã‚¤ã‚¹"}
+kor,{"official":"ìŠ¤ìœ„ìŠ¤ ì—°ë°©","common":"ìŠ¤ìœ„ìŠ¤"}
+nld,{"official":"Zwitserse Confederatie","common":"Zwitserland"}
+per,{"official":"Ú©Ù†ÙØ¯Ø±Ø§Ø³ÛŒÙˆÙ† Ø³ÙˆØ¦ÛŒØ³","common":"Ø³ÙˆØ¦ÛŒØ³"}
+pol,{"official":"Konfederacja Szwajcarska","common":"Szwajcaria"}
+por,{"official":"ConfederaÃ§Ã£o SuÃ­Ã§a","common":"SuÃ­Ã§a"}
+rus,{"official":"Ð¨Ð²ÐµÐ¹Ñ†Ð°Ñ€ÑÐºÐ°Ñ ÐšÐ¾Ð½Ñ„ÐµÐ´ÐµÑ€Ð°Ñ†Ð¸Ñ","common":"Ð¨Ð²ÐµÐ¹Ñ†Ð°Ñ€Ð¸Ñ"}
+slk,{"official":"Å vajÄiarska konfederÃ¡cia","common":"Å vajÄiarsko"}
+spa,{"official":"ConfederaciÃ³n Suiza","common":"Suiza"}
+srp,{"official":"Ð¨Ð²Ð°Ñ˜Ñ†Ð°Ñ€ÑÐºÐ° ÐšÐ¾Ð½Ñ„ÐµÐ´ÐµÑ€Ð°Ñ†Ð¸Ñ˜Ð°","common":"Ð¨Ð²Ð°Ñ˜Ñ†Ð°Ñ€ÑÐºÐ°"}
+swe,{"official":"Schweiziska edsfÃ¶rbundet","common":"Schweiz"}
+tur,{"official":"Ä°sviÃ§re Konfederasyonu","common":"Ä°sviÃ§re"}
+urd,{"official":"Ø³ÙˆØ¦ÛŒØ³  Ù…ØªØ­Ø¯Û","common":"Ø³ÙˆÛŒÙ¹Ø°Ø±Ù„ÛŒÙ†Úˆ"}
+zho,{"official":"ç‘žå£«è”é‚¦","common":"ç‘žå£«"}
 
 All
 ---------------
