@@ -52,7 +52,7 @@ The Json routine goes as follow:
 ```
 
 As raw characters:
-
+``` html
 ara,{"official":"الاتحاد السويسري","common":"سويسرا"}
 bre,{"official":"Kengevredad Suis","common":"Suis"}
 ces,{"official":"Švýcarská konfederace","common":"Švýcarsko"}
@@ -69,7 +69,7 @@ nld,{"official":"Zwitserse Confederatie","common":"Zwitserland"}
 per,{"official":"کنفدراسیون سوئیس","common":"سوئیس"}
 pol,{"official":"Konfederacja Szwajcarska","common":"Szwajcaria"}
 por,{"official":"Confederação Suíça","common":"Suíça"}
-
+```
 languages: 25 JSON Unescaped
 ara,{"official":"Ø§Ù„Ø§ØªØ­Ø§Ø¯ Ø§Ù„Ø³ÙˆÙŠØ³Ø±ÙŠ","common":"Ø³ÙˆÙŠØ³Ø±Ø§"}
 bre,{"official":"Kengevredad Suis","common":"Suis"}
