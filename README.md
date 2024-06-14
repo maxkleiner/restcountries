@@ -70,6 +70,7 @@ nld,{"official":"Zwitserse Confederatie","common":"Zwitserland"}
 per,{"official":"کنفدراسیون سوئیس","common":"سوئیس"}
 pol,{"official":"Konfederacja Szwajcarska","common":"Szwajcaria"}
 por,{"official":"Confederação Suíça","common":"Suíça"}
+tur,{"official":"İsviçre Konfederasyonu","common":"İsviçre"}
 ```
 languages: 25 JSON Unescaped
 ara,{"official":"Ø§Ù„Ø§ØªØ­Ø§Ø¯ Ø§Ù„Ø³ÙˆÙŠØ³Ø±ÙŠ","common":"Ø³ÙˆÙŠØ³Ø±Ø§"}
@@ -100,7 +101,11 @@ zho,{"official":"ç‘žå£«è”é‚¦","common":"ç‘žå£«"}
 
 for a single line use teststr:= 'ces,{"official":"Å vÃ½carskÃ¡ konfederace","common":"Å vÃ½carsko"}  '
  writeln((CharsetConversion(teststr,UTF_8,CP1250)));
- >>> ces,{"official":"Švýcarská konfederace","common":"Švýcarsko"}  
+ >>> ces,{"official":"Švýcarská konfederace","common":"Švýcarsko"}
+> >>
+> >> writeln(jo2.keys[it]+','+CharsetConversion(JSONUnescape(jo2.getstring(jo2.keys[it]),
+                       #13#10),UTF_8, CP1250));
+        
 
 All
 ---------------
