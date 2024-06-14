@@ -41,6 +41,15 @@ API Endpoints
 =======
 
 Below are described the REST endpoints available that you can use to search for countries
+The Json routine goes as follow:
+``` code
+     jo:= TJSONObject.Create4(''+tmpstr+'}');  
+       jo2:= jo.getjsonobject('translations');
+        writeln('languages: '+itoa(jo2.length));
+         for it:= 0 to jo2.length-1 do begin
+           writeln(jo2.keys[it]+','+JSONUnescape(jo2.getstring(jo2.keys[it]),#13#10));
+         end; 
+```
 
 All
 ---------------
