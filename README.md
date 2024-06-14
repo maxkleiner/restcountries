@@ -98,6 +98,10 @@ tur,{"official":"Ä°sviÃ§re Konfederasyonu","common":"Ä°sviÃ§re"}
 urd,{"official":"Ø³ÙˆØ¦ÛŒØ³  Ù…ØªØ­Ø¯Û","common":"Ø³ÙˆÛŒÙ¹Ø°Ø±Ù„ÛŒÙ†Úˆ"}
 zho,{"official":"ç‘žå£«è”é‚¦","common":"ç‘žå£«"}
 
+for a single line use teststr:= 'ces,{"official":"Å vÃ½carskÃ¡ konfederace","common":"Å vÃ½carsko"}  '
+ writeln((CharsetConversion(teststr,UTF_8,CP1250)));
+ >>> ces,{"official":"Švýcarská konfederace","common":"Švýcarsko"}  
+
 All
 ---------------
 
