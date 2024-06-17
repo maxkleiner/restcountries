@@ -1,6 +1,8 @@
 //****************Shell Tester**************************
 program RESTcountries_Composer1_64bit_UC_5;
 
+//https://software.hixie.ch/utilities/cgi/unicode-decoder/utf8-decoder
+
 //API Endpoints v3
 //https://restcountries.com/
 
@@ -17,6 +19,21 @@ Const
   URLWeatherAPI='https://api.openweathermap.org/data/2.5/weather?q=%s&units=metric&appid=%s';
   RESTCountries = 'https://restcountries.com/v3.1/name/%s';
   RESTCountriesC = 'https://restcountries.com/v2/capital/%s';
+  
+ JSONDATA = 
+  '[        '+LF+
+  '  {"official":"Ø§Ù„Ø§ØªØØ§Ø¯ Ø§Ù„Ø³ÙˆÙŠØ³Ø±ÙŠ","common":"Ø³ÙˆÙŠØ³Ø±Ø§"},'+LF+
+  '  {"official":"Kengevredad Suis","common":"Suis"},                      '+LF+
+  '  {"official":"Å vÃ½carskÃ¡ konfederace","common":"Å vÃ½carsko"},       '+LF+
+  '  {"official":"Swiss Confederation","common":"Switzerland"},            '+LF+
+  '  {"official":"Å veitsi KonfÃ¶deratsioon","common":"Å veits"},          '+LF+
+  '  {"official":"Sveitsin valaliitto","common":"Sveitsi"},                '+LF+
+  '  {"official":"ConfÃ©dÃ©ration suisse","common":"Suisse"},              '+LF+
+  '  {"official":"Å¡vicarska Konfederacija","common":"Å vicarska"},        '+LF+
+  '  {"official":"SvÃ¡jc","common":"SvÃ¡jc"},                              '+LF+
+  '  {"official":"Confederazione svizzera","common":"Svizzera"}            '+LF+
+'] '+LF+
+        '"""   ';
      
   
 function GetWeatherStreamJSON(const Data, APIKEY: string): string;
@@ -58,19 +75,19 @@ const HIDDENT2=
 //private final static String JSON_TEST_DATA
 const HIDDENT3=
          '{'
-        + '���\"tms_guid\": \"9LaHmoHpmTd811R\", '
-        + '���\"recharge_status\": \"100\", '
-        + '���\"message\": \"Transaction Successful\", '
-        + '���\"response_time\": { '
-        + '������\"verifyClient\": 0.0281, '
-        + '������\"verifyGuid\": 0.8695, '
-        + '������\"verifyOperator\": 0.8698,'
-        + '������\"verifyMsid\": 0.8698,'
-        + '������\"tms_guid\": 1.6971,'
-        + '������\"queryErr\": 7.4243,'
-        + '������\"StoringRecharge\": 7.4358,'
-        + '������\"UpdatingBalance\": 7.448'
-        + '���}'
+        + '   \"tms_guid\": \"9LaHmoHpmTd811R\", '
+        + '   \"recharge_status\": \"100\", '
+        + '   \"message\": \"Transaction Successful\", '
+        + '   \"response_time\": { '
+        + '      \"verifyClient\": 0.0281, '
+        + '      \"verifyGuid\": 0.8695, '
+        + '      \"verifyOperator\": 0.8698,'
+        + '      \"verifyMsid\": 0.8698,'
+        + '      \"tms_guid\": 1.6971,'
+        + '      \"queryErr\": 7.4243,'
+        + '      \"StoringRecharge\": 7.4358,'
+        + '      \"UpdatingBalance\": 7.448'
+        + '   }'
         + '}';
         
 const HIDDENT4INVALID=        
@@ -81,13 +98,13 @@ const HIDDENT4INVALID=
    ' "response_time": {                     '+
    '   "verifyClient": 0.0281,              '+
    '   "verifyGuid": 0.8695,                '+
-   '���"verifyOperator": 0.8698,            '+
-   '���"verifyMsid": 0.8698,                '+
-   '� �"tms_guid": 1.6971,                  '+
-   '���"queryErr": 7.4243,                  '+
-   '���"StoringRecharge": 7.4358,           '+
-   '���"UpdatingBalance": 7.448             '+
-   '� }                                     '+
+   '   "verifyOperator": 0.8698,            '+
+   '   "verifyMsid": 0.8698,                '+
+   '   "tms_guid": 1.6971,                  '+
+   '   "queryErr": 7.4243,                  '+
+   '   "StoringRecharge": 7.4358,           '+
+   '   "UpdatingBalance": 7.448             '+
+   '  }                                     '+
    '}                                       ';
    
 const HIDDENT4VALID=
@@ -179,59 +196,147 @@ end;
 function GetRestCountriesJSON2(const URLCountry, Datafeed, APIKEY: string): string;
 var encodURL, tmpstr, savstr: string;
     mapStrm: TStringStream; jo,jo2: TJSONObject; ajar: TJSONArray; //jconv:TJSONConverter ;
+    job: TJSON;   arest: TRestResource;   savestr: string;
+
 begin
   //datafeed:= 'vienna';
   encodURL:= Format(URLCountry,[HTTPEncode(Datafeed), APIKEY]); 
   mapStrm:= TStringStream.create('');
   try
-    HttpGet(EncodURL, mapStrm);  //WinInet
+  
+   with TRestClient.create(self) do begin
+      arest:= Resource(EncodURL);
+
+    //HttpGet(EncodURL, mapStrm);  //WinInet
+    
+      arest.ContentType('application/json');
+      //arest.Authorization('Bearer '+CHATGPT_APIKEY2);
+      ConnectionType:= hctWinInet;
+      //arest.get1(mapStrm)
+     // job:= TJSON.Create();   
+    //job.parse(arest.get); 
+    savestr:=  arest.get;
+    writ(savestr)
+   SaveStringToStreamUTF8(savestr, mapstrm);
+   end;     
+     writeln('size '+itoa(mapstrm.size));   
+      writeln('cont '+(mapstrm.datastring));   
     mapStrm.Position:= 0;
-     writeln('  ');                                       
-    // jo:= TJSONObject.Create4(HIDDENT4VALID);  
+     writeln('  ');   
+    //writeln((mapstrm.datastring));                                    
+    // jo:= TJSONObject.Create4(HIDDENT4VALID);   
+    writ(formatjson2 (savestr, 4));
+    //writ(formatjson((mapstrm.datastring)));
+    job:= TJSON.Create();   
+    job.parse(savestr); 
+    //writeln(itoa(job.jsonobject.items[0]));
+   // writeln(job.jsonarray.items[0].asobject['translations'].asstring);
+    //job.values[0].asstring;
+    //job.jsonarray.items[0].asobject['translations'].asstring;
+     //writeln(job.jsonarray.items[0].asobject['translations'].asobject['official'].asstring);
+     //job.jsonarray[0].asobject['translations'].values;
+     //writ(job.jsonarray[0].asobject['translations'].asstring); 
+      //writeln(parsejsonvalue(job.stringify))
+      // writeln(parsejsonvalue(mapStrm.datastring))
+      //char2
+      //kformat
+      //writeln(itoa(job.jsonarray[0].asobject['translations'].asarray[0].asarray.count));
+      writeln(itoa(job.jsonarray[0].asobject['translations'].asobject.count));
+     writeln(job.jsonarray[0].asobject['translations'].asobject['ara'].asobject['official'].asstring);
+     writeln(job.jsonarray[0].asobject['translations'].asobject['ces'].asobject['common'].asstring);
+         
+     //writeln(job.jsonarray[0].asobject['translations'].asobject[]['ara'].asstring)// ['translations'].items count)); 
+     //writeln(job.jsonarray[0].asobject['translations'].asarray[0].asstring)// ['translations'].items count)); 
+     //writeln(job.jsonarray[0].asobject['translations'].asobject['official'].asstring);     
+    
+    //E: Exception: <TJsonValue>"translations" value type error: jvObject to jvString
+    //E: Exception: <TJson>json struct type is not jsObject
+    //for it:= 0 to job.jsonarray.count-1 do
+      //writeln(itoa(it)+':'+job.jsonarray.items[it].asobject['translations'].asstring);     
+    job.free;
     //imoortant hack: we have to replace json node from [{ to { ! 
-    tmpstr:= StringReplace(mapStrm.datastring, '[{"name',
+    //writeln((ParseJsonvalue((mapStrm.datastring))));
+    //tmpstr:= StringReplace(mapStrm.datastring, '[{"name',
+      //                     '{"name',[rfReplaceAll, rfIgnoreCase]);
+    tmpstr:= StringReplace(savestr, '[{"name',
                            '{"name',[rfReplaceAll, rfIgnoreCase]);
+  
     //writeln('tempstr: '+(htmldecode(tmpstr)));
     //writeln('tempstr: '+(JSONUnescape((tmpstr), #13#10)));
    //writeln('tempstr: '+CharsetConversion(JSONUnescape((tmpstr), #13#10), UTF_8, ISO_8859_1));
-    writeln('tempstr: '+CharsetConversion(ParseJSOnValue((mapStrm.datastring)), UTF_8, ISO_8859_1));
-     
+   // writeln('tempstr: '+CharsetConversion(ParseJSOnValue((mapStrm.datastring)), UTF_8, ISO_8859_1));
+       jo:= TJSONObject.Create4(''+(tmpstr)+'}');  
+       jo2:= jo.getjsonobject('translations');
+        writeln('languages: '+itoa(jo2.length));
+        //jo.stringify
+       //ajar:= jo.names;
+         for it:= 0 to jo2.length-1 do begin
+          writeln(jo2.keys[it]+','+JSONUnescape(jo2.getstring(jo2.keys[it]),#13#10));   
+          //writeln(ParseJsonvalue(mapStrm.datastring));
+          //writeln(CRLF)  
+          {writeln(jo2.keys[it]+','+CharsetConversion(JSONUnescape(jo2.getstring(jo2.keys[it]),
+                       #13#10),UTF_8, CP1250));
+               }
+         end; 
+         jo2:= jo.getjsonobject('languages');
+        writeln(itoa(jo2.length));
+       //ajar:= jo.names;
+         for it:= 0 to jo2.length-1 do begin
+          writeln(JSONUnescape(jo2.getstring(jo2.keys[it]),#13#10));
+          //writeln(CRLF)    
+         end; 
+         //writeln(JSONUnescape(jo2.getstring(jo2.keys[it]), #13#10));
+         //writeln(CharsetConversion(parsejsonvalue(jo2.getstring(jo2.keys[it])),UTF_8,ISO_8859_1));
+         //savstr:= savstr + jo2.getstring(jo2.keys[it]);
+        // savstr:= savstr +CharsetConversion(parsejsonvalue(jo2.getstring(jo2.keys[it])),UTF_8,ISO_8859_1);
+    // end;   //} 
+    {   for it:= 0 to jo2.length-1 do begin
+         //writeln(JSONUnescape(jo2.getstring(jo2.keys[it]), #13#10));
+         //writeln(CharsetConversion(parsejsonvalue(jo2.getstring(jo2.keys[it])),UTF_8,ISO_8859_1));
+         //savstr:= savstr + jo2.getstring(jo2.keys[it]);
+         savstr:= savstr +CharsetConversion(parsejsonvalue(jo2.getstring(jo2.keys[it])),UTF_8,ISO_8859_1);
+     end;   } 
+    
+     // savestring3(exepath+'restcountrieskeysutf81.txt', JSONUnescape(tmpstr,#13#10 ), false);
+     // openfile(exepath+'restcountrieskeysutf81.txt');
      writeln('  ');                           
-     jo:= TJSONObject.Create4(''+tmpstr+'}');  
+    // jo:= TJSONObject.Create4(''+tmpstr+'}');  
     //Function remove( key : string) : TZAbstractObject');
-     jo.remove('flag');
+   (*  jo.remove('flag');
      writeln('capital: '+(jo.getstring('capital')));
      writeln('nativename: '+
        jo.getjsonobject('name').getjsonobject('nativename').getjsonobject('fra').getstring('common'));
      writeln('len translations: '+itoa(jo.getjsonobject('translations').length))
      jo2:= jo.getjsonobject('translations');
      ajar:= jo.names;
+     *)
      //writeln('opt: '+ajar.optstring(6))
      //writeln('optarray: '+ajar.getjsonarray(6).getjsonarray(1).getstring(1))
-     writeln('len node names: '+itoa(ajar.length))
+    { writeln('len node names: '+itoa(ajar.length))
      for it:= 0 to jo2.length-1 do begin
          //writeln(JSONUnescape(jo2.getstring(jo2.keys[it]), #13#10));
          writeln(CharsetConversion(parsejsonvalue(jo2.getstring(jo2.keys[it])),UTF_8,ISO_8859_1));
          //savstr:= savstr + jo2.getstring(jo2.keys[it]);
          savstr:= savstr +CharsetConversion(parsejsonvalue(jo2.getstring(jo2.keys[it])),UTF_8,ISO_8859_1);
-     end; 
+     end;    
         
       //https://onlinetools.com/unicode/check-spoofed-unicode-text  
        savestring3(exepath+'restcountrieskeysutf8.txt', JSONUnescape(savstr,#13#10 ), false);
+       }
        sleep(500);
-       openfile(exepath+'restcountrieskeysutf8.txt');     
+      // openfile(exepath+'restcountrieskeysutf8.txt');     
      ajar:= jo.getjsonarray('borders'); 
      writeln('len names borders: '+itoa(ajar.length))   
      for it:= 0 to ajar.length-1 do 
-             writeln(ajar.getstring(it));    
-     jo2:= jo.getjsonobject('languages');  
+             writeln(ajar.getstring(it));      //}
+    jo2:= jo.getjsonobject('languages');  
      writeln('len names languages: '+itoa(jo2.length))  
      for it:= 0 to jo2.length-1 do begin
         //writeln(jo2.getstring(it));  
         writeln(jo2.getstring(jo2.keys[it])); 
-     end; 
-     writeln(jo.getjsonobject('flags').getstring('png'))   
-     openweb(jo.getjsonobject('maps').getstring('openStreetMaps'));    
+     end;    //}
+    // writeln(jo.getjsonobject('flags').getstring('png'))   
+     //openweb(jo.getjsonobject('maps').getstring('openStreetMaps'));    
   except  
     //writeln('Error: '+mapstrm.datastring);
     writeln('E: '+ExceptiontoString(exceptiontype, exceptionparam));   
@@ -317,10 +422,48 @@ begin
   end; 
 end; 
 
+var ESCAPES:    set of Char; // = ['b', 't', 'n', 'f', 'r', '"', '/', '\', 'u' ];
+    HEXA:       tcharset;// = ['0'..'9', 'A'..'F', 'a'..'f'];
+function escapeChar_(const aStr: string; aPos, aLen: Integer; out aUnk: Boolean): Integer;
+var
+  n: Integer;
+begin
+  aUnk := False;
+  n    := 1;
+  if (aStr[aPos] = '\') then
+  begin
+    // check next char is escapable
+    if (aPos < aLen) //and
+      //(aStr[aPos+1] in ESCAPES) then begin
+      // one char escapes  
+      then begin
+      if (aStr[aPos+1] <> 'u') then
+        n := 2
+      else
+      //  u+(4 hexa) escape
+      begin
+        if (aLen-aPos-1  >  4   ) //and
+           //(aStr[aPos+2] in HEXA) and
+           //(aStr[aPos+3] in HEXA) and
+           //(aStr[aPos+4] in HEXA) and
+           //(aStr[aPos+5] in HEXA)
+          then n := 6        // \u1234 (6 chars)
+          else aUnk := True; // bad \u escape
+      end
+    // if not escapable
+    end
+    else aUnk := True;
+  end;
+  // return the gap escaped
+  Result := n;
+end;
+
+
  //var   IDoc: IHTMLDocument2;
 var regEx: TRegExpr; //or OleVariant if HISUtils;
     envlist: Tstringlist; bbb: TBytes;
     DaysDiff: Double;
+    //aJsonDoc : TalJsonDocumentU;
 
 begin  //@main
   //maxform1.ShellStyle1click(self)
@@ -369,6 +512,29 @@ begin  //@main
    envlist.Free;    }
    //BAClear(bbb);
    
+  { aJsonDoc := TalJsonDocU.create;
+      aJsonDoc.loadFromFile(...);
+      for i := 0 to aJsonDoc.node.childnodes.count-1 do begin
+        myValue := aJsonDoc.node.childNodes[i].getchildNodeValueText(['b', 'email']); 
+        if myValue <> '' then break;
+      end;    }
+      //getjsondata
+      //findutf8bom
+      //EMcJsonException');
+      //jitArray )');
+      //jvtNull )');
+  //TMcJsonItemEnumerator');
+  //SIRegister_TMcJsonItem(CL);
+  //SIRegister_TMcJsonItemEnumerator(CL);
+            //jetNone )');
+ //McJsonEscapeString( const aStr : string; aEsc : TJEscapeType) : string');
+ //McJsonUnEscapeString( const aStr : string) : string');
+ //GetItemTypeStr( aType : TJItemType) : string');
+ //GetValueTypeStr( aType : TJValueType) : string');
+
+ //escapeChar(const aStr: string; aPos, aLen: Integer; out aUnk: Boolean): Integer;');
+ //findUtf8BOM(const Stream: TStream): Int64;');
+   
 //writeln(itoa(wdc_GetRemoteFileSize(
 //'https://assets.catawiki.com/image/pr:cw_large/plain/assets/catawiki/assets/2019/6/11/0/8/d/08d17332-cebf-4d83-a622-1a658ae7f056.jpg')));
        
@@ -376,6 +542,8 @@ End.
 
 Doc: https://gitlab.com/amatos/rest-countries/-/blob/master/README.md
 https://github.com/maxkleiner/restcountries
+
+{"official":"الاتحاد السويسري","common":"سويسرا"}
 
 This API works the following way: it offers the service of geocoding, cartography, and many other possibilities. 
 In our example, we will use direct geocoding. We will send the address to receive latitude, longitude, 
@@ -391,7 +559,7 @@ you can use https://restcountries.com/ is a cloned repo that I update frecuently
       REPL : 
       https://meet.google.com/pxu-nehx-qzp
       
-      gryzzly - gr�ulich, grisly - grausig  (ghastly awful) - gr�sslich
+      gryzzly - gräulich, grisly - grausig  (ghastly awful) - grässlich
 
    https://rapidapi.com/collection/list-of-free-apis               
    https://wiki.delphi-jedi.org/wiki/JCL_Help:Execute@string@string@Boolean@PBoolean
@@ -524,16 +692,166 @@ up the Acrobat Reader and display the generated PDF.
  
 https://my6.code.blog/2022/09/02/webpostdata/
 
-Locomotive �lectrique BB26023 livr�e Corail logo Beffara (dit nouille). 
-Immatriculation : BB26023. 324712109726 JOUEF BB26023 LOGO beffara ep v sncf oh 1/87 - �146.67.
+Locomotive électrique BB26023 livrée Corail logo Beffara (dit nouille). 
+Immatriculation : BB26023. 324712109726 JOUEF BB26023 LOGO beffara ep v sncf oh 1/87 - £146.67.
 
 Interpreters usually take less amount of time to analyze the source code. However, 
 the overall execution time is comparatively slower than compilers. 
 A compiler scans the entire program and translates it from object code as a whole into machine code. 
   
-   
+    {"official":"_______ ________","common":"______"}
+{"official":"Kengevredad Suis","common":"Suis"}
+{"official":"_výcarská konfederace","common":"_výcarsko"}
+{"official":"Swiss Confederation","common":"Switzerland"}
+{"official":"Schweizerische Eidgenossenschaft","common":"Schweiz"}
+{"official":"_veitsi Konföderatsioon","common":"_veits"}
+{"official":"Sveitsin valaliitto","common":"Sveitsi"}
+{"official":"Confédération suisse","common":"Suisse"}
+{"official":"_vicarska Konfederacija","common":"_vicarska"}
+{"official":"Svájc","common":"Svájc"}
+{"official":"Confederazione svizzera","common":"Svizzera"}
+{"official":"_____","common":"___"}
+{"official":"___ __","common":"___"}
+{"official":"Zwitserse Confederatie","common":"Zwitserland"}
+{"official":"__________ _____","common":"_____"}
+{"official":"Konfederacja Szwajcarska","common":"Szwajcaria"}
+{"official":"Confederação Suíça","common":"Suíça"}
+{"official":"___________ ____________","common":"_________"}
+{"official":"_vaj_iarska konfederácia","common":"_vaj_iarsko"}
+{"official":"Confederación Suiza","common":"Suiza"}
+{"official":"__________ _____________","common":"__________"}
+{"official":"Schweiziska edsförbundet","common":"Schweiz"}
+{"official":"_sviçre Konfederasyonu","common":"_sviçre"}
+{"official":"_____  _____","common":"__________"}
+{"official":"____","common":"__"}
+len names borders: 5
+
+ara,{"official":"الاتحاد السويسري","common":"سويسرا"}
+bre,{"official":"Kengevredad Suis","common":"Suis"}
+ces,{"official":"Švýcarská konfederace","common":"Švýcarsko"}
+cym,{"official":"Swiss Confederation","common":"Switzerland"}
+deu,{"official":"Schweizerische Eidgenossenschaft","common":"Schweiz"}
+est,{"official":"Šveitsi Konföderatsioon","common":"Šveits"}
+fin,{"official":"Sveitsin valaliitto","common":"Sveitsi"}
+fra,{"official":"Confédération suisse","common":"Suisse"}
+hrv,{"official":"švicarska Konfederacija","common":"Švicarska"}
+hun,{"official":"Svájc","common":"Svájc"}
+ita,{"official":"Confederazione svizzera","common":"Svizzera"}
+jpn,{"official":"スイス連邦","common":"スイス"}
+nld,{"official":"Zwitserse Confederatie","common":"Zwitserland"}
+per,{"official":"کنفدراسیون سوئیس","common":"سوئیس"}
+pol,{"official":"Konfederacja Szwajcarska","common":"Szwajcaria"}
+por,{"official":"Confederação Suíça","common":"Suíça"}
+tur,{"official":"İsviçre Konfederasyonu","common":"İsviçre"}
    
      
-  
+  import json
+
+json_data = '''
+[
+    {"official":"Ø§Ù„Ø§ØªØØ§Ø¯ Ø§Ù„Ø³ÙˆÙŠØ³Ø±ÙŠ","common":"Ø³ÙˆÙŠØ³Ø±Ø§"},
+    {"official":"Kengevredad Suis","common":"Suis"},
+    {"official":"Å vÃ½carskÃ¡ konfederace","common":"Å vÃ½carsko"},
+    {"official":"Swiss Confederation","common":"Switzerland"},
+    {"official":"Å veitsi KonfÃ¶deratsioon","common":"Å veits"},
+    {"official":"Sveitsin valaliitto","common":"Sveitsi"},
+    {"official":"ConfÃ©dÃ©ration suisse","common":"Suisse"},
+    {"official":"Å¡vicarska Konfederacija","common":"Å vicarska"},
+    {"official":"SvÃ¡jc","common":"SvÃ¡jc"},
+    {"official":"Confederazione svizzera","common":"Svizzera"}
+]
+'''
+
+# Decoding JSON data with correct UTF-8 handling
+decoded_data = json.loads(json_data)
+
+for entry in decoded_data:
+    for key, value in entry.items():
+        print(f"{key}: {value}")
+
+# Correctly display the JSON data
+
+
+uses
+  SysUtils, IdHTTP, DateUtils;
+
+function GetTimeFromServer(const ServerList: array of string): TDateTime;
+var
+  i: Integer;
+  IdHTTP: TIdHTTP;
+  Response: string;
+begin
+  IdHTTP := TIdHTTP.Create(nil);
+  try
+    for i := 0 to High(ServerList) do
+    begin
+      try
+        // Versuchen, die Zeit vom aktuellen Server abzurufen
+        Response := IdHTTP.Get(ServerList[i]);
+        // Verarbeiten der Antwort, um die Zeit zu extrahieren (Annahme: Zeit ist direkt im Response)
+        Result := StrToDateTime(Response);
+        Exit; // Erfolg, Funktion beenden
+      except
+        on E: Exception do
+        begin
+          // Fehler beim Abrufen der Zeit, zum nächsten Server weitergehen
+          if i = High(ServerList) then
+            raise Exception.Create('Kein Zeitserver erreichbar');
+        end;
+      end;
+    end;
+  finally
+    IdHTTP.Free;
+  end;
+end;
+
+// Beispielaufruf der Funktion
+var
+  TimeServers: array[0..3] of string = (
+    'http://worldtimeapi.org/api/timezone/Etc/UTC',
+    'http://worldclockapi.com/api/json/utc/now',
+    'http://timeapi.io/api/Time/current/zone?timeZone=UTC',
+    'http://api.timezonedb.com/v2.1/get-time-zone?key=YOUR_API_KEY&format=json&by=zone&zone=UTC'
+  );
+  CurrentTime: TDateTime;
+begin
+  try
+    CurrentTime := GetTimeFromServer(TimeServers);
+    ShowMessage('Aktuelle Zeit: ' + DateTimeToStr(CurrentTime));
+  except
+    on E: Exception do
+      ShowMessage('Fehler: ' + E.Message);
+  end;
+end;
+
+Antwort Kap. 4.1
+
+function getJsonData(JsonString: String; User: String; Field: String): String;
+var
+  JSonValue: TJSonValue;
+  JsonArray: TJSONArray;
+  ArrayElement: TJSonValue;
+  FoundValue: TJSonValue;
+begin
+  Result :='';
+
+  // create TJSonObject from string
+  JsonValue := TJSonObject.ParseJSONValue(JsonString);
+
+  // get the array
+  JsonArray := JsonValue as TJSONArray;
+
+  // iterate the array
+  for ArrayElement in JsonArray do begin
+      FoundValue := ArrayElement.FindValue(User);
+      if FoundValue <> nil then begin
+        Result := ArrayElement.GetValue<string>(User + '.' + Field);
+        break;
+      end;
+  end;
+end;
+
+https://stackoverflow.com/questions/46534011/delphi-parse-json-array-or-array
+
   
   
