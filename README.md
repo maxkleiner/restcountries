@@ -43,12 +43,62 @@ API Endpoints
 Below are described the REST endpoints available that you can use to search for countries
 The Json routine goes as follow:
 ``` code
+       var arest: TRestResource;
+       encodURL:= Format(URLCountry,[HTTPEncode(Datafeed), APIKEY]);
+       with TRestClient.create(self) do begin
+         arest:= Resource(EncodURL);
+         arest.ContentType('application/json');
+         //arest.Authorization('Bearer '+CHATGPT_APIKEY2);
+         ConnectionType:= hctWinInet;
+         tmpstr:=  arest.get();
+
        jo:= TJSONObject.Create4(''+tmpstr+'}');  
        jo2:= jo.getjsonobject('translations');
         writeln('languages: '+itoa(jo2.length));
          for it:= 0 to jo2.length-1 do begin
            writeln(jo2.keys[it]+','+JSONUnescape(jo2.getstring(jo2.keys[it]),#13#10));
          end; 
+```
+``` html
+languages: 25
+ara,{"official":"الاتحاد السويسري","common":"سويسرا"}
+bre,{"official":"Kengevredad Suis","common":"Suis"}
+ces,{"official":"Švýcarská konfederace","common":"Švýcarsko"}
+cym,{"official":"Swiss Confederation","common":"Switzerland"}
+deu,{"official":"Schweizerische Eidgenossenschaft","common":"Schweiz"}
+est,{"official":"Šveitsi Konföderatsioon","common":"Šveits"}
+fin,{"official":"Sveitsin valaliitto","common":"Sveitsi"}
+fra,{"official":"Confédération suisse","common":"Suisse"}
+hrv,{"official":"švicarska Konfederacija","common":"Švicarska"}
+hun,{"official":"Svájc","common":"Svájc"}
+ita,{"official":"Confederazione svizzera","common":"Svizzera"}
+jpn,{"official":"スイス連邦","common":"スイス"}
+kor,{"official":"스위스 연방","common":"스위스"}
+nld,{"official":"Zwitserse Confederatie","common":"Zwitserland"}
+per,{"official":"کنفدراسیون سوئیس","common":"سوئیس"}
+pol,{"official":"Konfederacja Szwajcarska","common":"Szwajcaria"}
+por,{"official":"Confederação Suíça","common":"Suíça"}
+rus,{"official":"Швейцарская Конфедерация","common":"Швейцария"}
+slk,{"official":"Švajčiarska konfederácia","common":"Švajčiarsko"}
+spa,{"official":"Confederación Suiza","common":"Suiza"}
+srp,{"official":"Швајцарска Конфедерација","common":"Швајцарска"}
+swe,{"official":"Schweiziska edsförbundet","common":"Schweiz"}
+tur,{"official":"İsviçre Konfederasyonu","common":"İsviçre"}
+urd,{"official":"سوئیس  متحدہ","common":"سویٹذرلینڈ"}
+zho,{"official":"瑞士联邦","common":"瑞士"}
+
+4 lang:
+French
+Swiss German
+Italian
+Romansh
+  
+len names borders: 5
+AUT
+FRA
+ITA
+LIE
+DEU
 ```
 
 As raw characters:
