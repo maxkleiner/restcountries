@@ -46,11 +46,13 @@ API Endpoints
 Below are described the REST endpoints available that you can use to search for countries
 The Json routine goes as follow:
 ```pascal
-       var arest: TRestResource;
+     var arest: TRestResource;
+         jo,jo2: TJSONObject; job: TJSON;
+
        encodURL:= Format(URLCountry,[HTTPEncode(Datafeed), APIKEY]);
        with TRestClient.create(self) do begin
          arest:= Resource(EncodURL);
-         arest.ContentType('application/json');
+         arest.ContentType('application/json; charset=utf-8');
          //arest.Authorization('Bearer '+CHATGPT_APIKEY2);
          ConnectionType:= hctWinInet;
          tmpstr:=  arest.get();
