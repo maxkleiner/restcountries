@@ -46,8 +46,8 @@ API Endpoints
 Below are described the REST endpoints available that you can use to search for countries
 The Json routine goes as follow:
 ```pascal
-     var arest: TRestResource;
-         jo,jo2: TJSONObject; job: TJSON;
+   var arest: TRestResource;
+       jo,jo2: TJSONObject; job: TJSON;
 
        encodURL:= Format(URLCountry,[HTTPEncode(Datafeed), APIKEY]);
        with TRestClient.create(self) do begin
